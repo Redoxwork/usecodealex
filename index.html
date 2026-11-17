@@ -1146,6 +1146,207 @@ body.gated{overflow:hidden}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}.hero h1 .w{opacity:1;transform:none}}
 </style>
+<style>
+/* ===== strategy section (Rugs.fun, main site) ===== */
+.st-w{padding:26px 22px;border-radius:22px}
+.st-tag{display:inline-block;background:#ecb843;color:#141c60;font:700 12px/1 Outfit,sans-serif;padding:6px 12px;border-radius:999px;letter-spacing:.02em}
+.st-h{font-family:"Luckiest Guy",sans-serif;font-weight:400;color:#141c60;font-size:clamp(28px,6vw,40px);line-height:1.02;margin:14px 0 12px;letter-spacing:.01em}
+.st-w p{font-family:Outfit,sans-serif;font-size:16px;line-height:1.65;color:#4a4560;margin:0 0 12px;max-width:640px}
+.st-ex{background:#fbefc8;border-left:4px solid #ecb843;padding:12px 14px;font:15px/1.6 Outfit,sans-serif;color:#5a4a1e;margin:6px 0 18px;max-width:640px}
+.st-ex b{color:#141c60}
+.st-v{position:relative;border-radius:18px;overflow:hidden;background:#141c60;aspect-ratio:16/9;max-width:760px;border:2px solid #141c60}
+.st-v video,.st-v iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.st-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#c9cde6;font:500 13px Outfit,sans-serif;text-decoration:none}
+.st-ph i{width:62px;height:62px;border-radius:50%;background:#ecb843;display:flex;align-items:center;justify-content:center}
+.st-ph i:after{content:"";border-left:18px solid #141c60;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px}
+/* maintenance */
+.mnt{position:fixed;inset:0;z-index:8000;background:#07080b;color:#ece5d6;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:Outfit,sans-serif}
+.mnt[hidden]{display:none}
+.mnt b{display:block;font-size:30px;margin-bottom:8px;font-family:"Bricolage Grotesque",sans-serif}
+.mnt p{color:#9a9385;margin:0}
+
+/* ===== admin ===== */
+.adm{position:fixed;inset:0;z-index:9000;overflow:auto;-webkit-overflow-scrolling:touch;font-family:Outfit,system-ui,sans-serif;color:#E9ECF3;background:#090C12;--g:#7FD6A8;--gd:#1F6E4A;--y:#E8B93A;--mut:#8C95A8;--ln:rgba(255,255,255,.10);--card:rgba(22,28,40,.48);--in:rgba(8,11,17,.55);--acc:var(--g)}
+.adm[hidden],.admbar[hidden]{display:none!important}
+.adm[data-r=rugs]{--acc:var(--y)}
+.adm *{box-sizing:border-box}
+.adm .bgl{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.adm .bgl i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;transition:background 1s}
+.adm .bgl .b1{width:52vmax;height:52vmax;left:-14vmax;top:-18vmax;background:rgba(46,160,110,.55);animation:admF1 22s ease-in-out infinite alternate}
+.adm .bgl .b2{width:46vmax;height:46vmax;right:-16vmax;top:28vh;background:rgba(232,185,58,.40);animation:admF2 26s ease-in-out infinite alternate}
+.adm .bgl .b3{width:44vmax;height:44vmax;left:10vw;bottom:-22vmax;background:rgba(60,90,190,.42);animation:admF1 30s ease-in-out infinite alternate-reverse}
+.adm[data-r=rugs] .bgl .b1{background:rgba(232,185,58,.42)}
+.adm[data-r=rugs] .bgl .b2{background:rgba(60,90,190,.45)}
+.adm[data-r=rugs] .bgl .b3{background:rgba(46,160,110,.30)}
+@keyframes admF1{to{transform:translate(8vmax,6vmax) scale(1.08)}}
+@keyframes admF2{to{transform:translate(-7vmax,-5vmax) scale(.94)}}
+@media (prefers-reduced-motion:reduce){.adm .bgl i{animation:none}}
+.adm .awrap{position:relative;z-index:1;min-height:100%}
+.adm .glz{background:var(--card);border:1px solid var(--ln);border-radius:16px;backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%)}
+.adm button{font:inherit;color:inherit;cursor:pointer}
+.adm a{color:var(--acc)}
+/* top bar */
+.adm .tb{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 20px;background:rgba(9,12,18,.62);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--ln)}
+.adm .tb .awho{display:flex;align-items:center;gap:10px;min-width:0}
+.adm .tb .awho img,.adm .ava{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#2B3446;flex:none}
+.adm .tb .awho b{display:block;font-size:16px}
+.adm .tb .awho small{display:block;color:var(--mut);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.adm .acts{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.adm .chip{border:1px solid var(--ln);background:rgba(255,255,255,.05);border-radius:999px;padding:7px 13px;font-size:13px;white-space:nowrap}
+.adm .chip.warn{background:rgba(232,185,58,.14);border-color:rgba(232,185,58,.35);color:var(--y)}
+.adm .chip.bad{background:rgba(226,92,92,.14);border-color:rgba(226,92,92,.4);color:#F29B9B}
+.adm .chip.ok{background:rgba(127,214,168,.12);border-color:rgba(127,214,168,.3);color:var(--g)}
+.adm .pbtn{background:var(--gd);color:#E3F7EC;border:0;border-radius:999px;padding:9px 18px;font-weight:700;font-size:14px}
+.adm .pbtn:hover{filter:brightness(1.1)}
+.adm .gbtn{background:rgba(255,255,255,.06);border:1px solid var(--ln);border-radius:999px;padding:8px 14px;font-size:14px}
+.adm .gbtn:hover{background:rgba(255,255,255,.1)}
+/* layout */
+.adm .lay{display:grid;grid-template-columns:220px minmax(0,1fr) 340px;gap:0;min-height:calc(100vh - 62px)}
+.adm .nav{padding:18px 12px;border-right:1px solid var(--ln);position:sticky;top:62px;height:calc(100vh - 62px);overflow:auto}
+.adm .nav button{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:0;padding:11px 13px;border-radius:11px;color:var(--mut);font-size:15px;margin-bottom:3px}
+.adm .nav button svg{width:19px;height:19px;flex:none}
+.adm .nav button.on{background:rgba(255,255,255,.08);color:#fff}
+.adm .nav button .ct{margin-left:auto;font-size:11px;background:var(--y);color:#1b1405;border-radius:99px;padding:1px 7px;font-weight:700}
+.adm .nav hr{border:0;border-top:1px solid var(--ln);margin:12px 4px}
+.adm .nav .sync{font-size:12px;color:var(--mut);padding:8px 13px;line-height:1.5}
+.adm main{padding:22px 28px 120px;min-width:0}
+.adm .apv{border-left:1px solid var(--ln);padding:18px;position:sticky;top:62px;height:calc(100vh - 62px);overflow:auto}
+@media (max-width:1180px){.adm .lay{grid-template-columns:200px minmax(0,1fr)}.adm .apv{display:none}}
+/* headings + segmented */
+.adm .hd{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.adm h1{font-size:26px;margin:0;font-weight:700}
+.adm h2{font-size:17px;margin:26px 0 10px;font-weight:600}
+.adm .seg{display:inline-flex;background:rgba(255,255,255,.05);border:1px solid var(--ln);border-radius:999px;padding:3px}
+.adm .seg button{border:0;background:none;border-radius:999px;padding:7px 16px;font-size:14px;color:var(--mut)}
+.adm .seg button.on[data-race=vega]{background:rgba(46,160,110,.25);color:var(--g)}
+.adm .seg button.on[data-race=rugs]{background:rgba(232,185,58,.2);color:var(--y)}
+/* fields */
+.adm .agrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.adm .ag2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.adm label.f{display:block}
+.adm .lb{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:14px 0 6px}
+.adm .hint{font-size:12px;color:var(--mut);margin-top:5px;line-height:1.5}
+.adm input[type=text],.adm input[type=number],.adm input[type=url],.adm input[type=datetime-local],.adm textarea,.adm select{width:100%;background:var(--in);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:11px 13px;color:#E9ECF3;font:15px Outfit,sans-serif;outline:none;transition:border-color .2s,box-shadow .2s}
+.adm textarea{min-height:84px;resize:vertical;line-height:1.5}
+.adm input:focus,.adm textarea:focus,.adm select:focus{border-color:var(--acc);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 22%,transparent)}
+.adm input.err,.adm textarea.err{border-color:#E25C5C}
+.adm input[type=datetime-local]{color-scheme:dark}
+.adm .card{padding:16px 18px}
+.adm .stat .k{font-size:12px;color:var(--mut)}
+.adm .stat .v{font-size:22px;margin-top:4px;font-weight:600}
+.adm .stat .s{font-size:12px;color:var(--mut);margin-top:3px}
+.adm .arow{display:flex;align-items:center;gap:10px}
+.adm .arow.sp{justify-content:space-between}
+.adm .list{display:flex;flex-direction:column;gap:8px}
+.adm .li{display:flex;align-items:center;gap:10px;padding:11px 14px;flex-wrap:wrap}
+.adm .li .agr{flex:1;min-width:120px}
+.adm .li small{color:var(--mut);display:block;font-size:12px}
+.adm .ax{background:none;border:1px solid var(--ln);border-radius:9px;width:34px;height:34px;flex:none;color:var(--mut);font-size:18px;line-height:1}
+.adm .ax:hover{color:#F29B9B;border-color:rgba(226,92,92,.4)}
+.adm .lnk{background:none;border:0;color:var(--acc);padding:4px 0;font-size:14px}
+.adm .addb{border:1px dashed rgba(255,255,255,.2);background:none;border-radius:11px;padding:10px 14px;color:var(--mut);font-size:14px}
+.adm .addb:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+/* toggle */
+.adm .atg{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;margin-bottom:8px}
+.adm .atg span b{display:block;font-weight:500;font-size:15px}
+.adm .atg span small{color:var(--mut);font-size:12px}
+.adm .sw2{position:relative;display:inline-block;vertical-align:middle;width:46px;height:27px;flex:none}
+.adm .sw2 input{opacity:0;position:absolute;inset:0;margin:0;cursor:pointer;z-index:1}
+.adm .sw2 i{position:absolute;inset:0;border-radius:99px;background:rgba(255,255,255,.14);transition:background .2s}
+.adm .sw2 i:after{content:"";position:absolute;left:3px;top:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:transform .2s}
+.adm .sw2 input:checked+i{background:var(--gd)}
+.adm .sw2 input:checked+i:after{transform:translateX(19px)}
+.adm .sw2 input:focus-visible+i{box-shadow:0 0 0 3px rgba(127,214,168,.4)}
+/* split rows */
+.adm .apl{display:grid;grid-template-columns:48px minmax(0,1fr) 34px;gap:8px;align-items:center;margin-bottom:8px}
+.adm .apl .n{color:var(--mut);font-size:14px;text-align:center}
+.adm .ml{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) 34px;gap:8px;margin-bottom:8px}
+.adm .sum{font-size:13px;margin-top:6px}
+.adm .sum.bad{color:#F29B9B}.adm .sum.warn{color:var(--y)}.adm .sum.ok{color:var(--g)}
+/* tables */
+.adm .tbl{width:100%;border-collapse:collapse;font-size:14px}
+.adm .tbl th{font-weight:500;color:var(--mut);font-size:12px;text-align:left;padding:8px 8px;border-bottom:1px solid var(--ln)}
+.adm .tbl td{padding:8px;border-bottom:1px solid rgba(255,255,255,.06);vertical-align:middle}
+.adm .tbl input[type=text],.adm .tbl input[type=number]{padding:7px 9px;font-size:14px}
+.adm .atw{overflow-x:auto;padding:6px 10px}
+.adm .apill{display:inline-block;font-size:11px;border-radius:99px;padding:3px 9px}
+.adm .apill.paid{background:rgba(127,214,168,.15);color:var(--g)}
+.adm .apill.pend{background:rgba(232,185,58,.15);color:var(--y)}
+.adm .apill.hid{background:rgba(226,92,92,.15);color:#F29B9B}
+.adm .todo{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 16px;margin-bottom:8px;width:100%;text-align:left;border:1px solid var(--ln)}
+.adm .todo em{font-style:normal;color:var(--y);white-space:nowrap}
+.adm .todo.done em{color:var(--g)}
+/* preview pane */
+.adm .pvh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:13px;color:var(--mut)}
+.adm .amini{border-radius:16px;padding:22px 16px;text-align:center;border:1px solid var(--ln);transition:background .4s}
+.adm .amini.vega{background:#0b0c0a}
+.adm .amini.rugs{background:#f4eee0;color:#141c60}
+.adm .amini .k{font-size:11px;letter-spacing:.2em;opacity:.7}
+.adm .amini .pool{font-size:38px;font-weight:800;margin-top:4px;font-family:"Bricolage Grotesque",sans-serif}
+.adm .amini.vega .pool,.adm .amini.vega .lbx{color:#EFE6CF}
+.adm .amini.rugs .pool{font-family:"Luckiest Guy",sans-serif;font-weight:400}
+.adm .amini .lbx{font-size:13px;letter-spacing:.42em}
+.adm .amini .hl{font-size:13px;opacity:.75;margin-top:8px}
+.adm .apod{display:flex;justify-content:center;align-items:flex-end;gap:8px;margin-top:22px}
+.adm .apod div{width:72px;text-align:center;font-size:11px}
+.adm .apod span{display:block;border-radius:8px 8px 0 0;margin-top:5px;padding-top:6px;font-weight:700}
+.adm .amini.vega .apod span{background:#1d2230;color:#EFE6CF}
+.adm .amini.rugs .apod span{background:#e9dfc6;color:#141c60}
+.adm .mrows{margin-top:14px;text-align:left;font-size:12px}
+.adm .mrows div{display:flex;justify-content:space-between;padding:8px 6px;border-top:1px solid rgba(127,127,127,.18)}
+.adm .mend{margin-top:14px;border-radius:10px;padding:9px;font-size:12px}
+.adm .amini.vega .mend{background:rgba(127,214,168,.12);color:var(--g)}
+.adm .amini.rugs .mend{background:#fbefc8;color:#5a4a1e}
+/* login */
+.adm .lgn{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.adm .lgn .glz{width:min(400px,100%);padding:30px 26px;text-align:center}
+.adm .lgn img{width:64px;height:64px;border-radius:50%;object-fit:cover}
+.adm .lgn h1{margin:14px 0 6px}
+.adm .lgn p{color:var(--mut);font-size:14px;line-height:1.55;margin:0 0 18px}
+.adm .kbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#53fc18;color:#07120a;border:0;border-radius:13px;padding:14px;font-weight:800;font-size:16px}
+.adm .kbtn b{background:#07120a;color:#53fc18;border-radius:6px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.adm .lerr{color:#F29B9B;font-size:13px;min-height:18px;margin-top:10px}
+/* checks modal */
+.adm .mdl{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px}
+.adm .mdl[hidden]{display:none}
+.adm .mdl .glz{width:min(560px,100%);max-height:80vh;overflow:auto;padding:20px;background:rgba(18,22,32,.92)}
+.adm .ck{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--ln);font-size:14px;line-height:1.5}
+.adm .ck i{flex:none;width:9px;height:9px;border-radius:50%;margin-top:7px}
+.adm .ck.e i{background:#E25C5C}.adm .ck.w i{background:var(--y)}
+.adm .ck button{margin-left:auto}
+@media (min-width:761px){.adm .mdl{align-items:center}}
+/* toast */
+.adm .tst{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;background:rgba(18,22,32,.95);border:1px solid var(--ln);padding:11px 18px;border-radius:12px;font-size:14px;z-index:30;transition:.25s;pointer-events:none;max-width:90vw;text-align:center}
+.adm .tst.on{opacity:1;transform:translate(-50%,0)}
+/* mobile */
+.adm .bb,.adm .pubbar{display:none}
+@media (max-width:760px){
+ .adm .lay{display:block}
+ .adm .nav{display:none}
+ .adm main{padding:16px 16px 170px}
+ .adm .tb{padding:10px 14px}
+ .adm .tb .acts{flex-wrap:nowrap}
+ .adm .tb .awho small{max-width:52vw}
+ .adm .tb .acts .gbtn:not([data-act=close]),.adm .tb .acts .pbtn,.adm .tb .acts .uns{display:none}
+ .adm h1{font-size:24px}
+ .adm .bb{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:6;justify-content:space-around;background:rgba(9,12,18,.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--ln);padding:8px 4px calc(10px + env(safe-area-inset-bottom))}
+ .adm .bb button{background:none;border:0;color:var(--mut);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 8px;position:relative}
+ .adm .bb button svg{width:22px;height:22px}
+ .adm .bb button.on{color:var(--acc)}
+ .adm .bb .ct{position:absolute;top:0;right:4px;background:var(--y);color:#1b1405;border-radius:99px;font-size:10px;padding:0 5px;font-weight:700}
+ .adm .pubbar{position:fixed;left:12px;right:12px;bottom:calc(70px + env(safe-area-inset-bottom));z-index:6;border-radius:14px;padding:12px 14px;background:var(--gd);color:#E3F7EC;align-items:center;justify-content:space-between;gap:10px;font-size:14px;box-shadow:0 12px 30px -10px rgba(0,0,0,.6)}
+ .adm .pubbar.show{display:flex}
+ .adm .pubbar.bad{background:#6e2a2a}
+ .adm .pubbar button{background:rgba(255,255,255,.16);border:0;border-radius:9px;padding:7px 12px;font-weight:700;color:#fff}
+ .adm .tbl{font-size:13px}
+}
+/* preview bar on main site */
+.admbar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:8500;display:flex;align-items:center;gap:10px;background:rgba(14,17,24,.94);color:#E9ECF3;border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:10px 12px;font:14px Outfit,sans-serif;box-shadow:0 18px 40px -14px rgba(0,0,0,.7);max-width:calc(100vw - 24px);flex-wrap:wrap;justify-content:center}
+.admbar b{color:#E8B93A;font-weight:600}
+.admbar button{font:600 14px Outfit,sans-serif;border:0;border-radius:9px;padding:8px 12px;cursor:pointer;background:rgba(255,255,255,.1);color:#fff}
+.admbar button.p{background:#1F6E4A}
+
+</style>
 </head>
 <body data-race="vega">
 <canvas id="bg" aria-hidden="true"></canvas>
@@ -1155,7 +1356,7 @@ body.gated{overflow:hidden}
 <div class="nova" id="nova" role="status"></div>
 <div class="toast" id="toast" role="status"></div>
 <div class="fx" id="fx" aria-hidden="true"><div class="nt"></div><div class="dk"></div><div class="sun"></div></div>
-<div class="scrim" id="scrim"></div><div class="tapfx" id="tapfx" aria-hidden="true"></div><div class="ag" id="ag" hidden><div class="ag-c" role="dialog" aria-modal="true" aria-labelledby="agT"><h2 id="agT">18+ only</h2><p>This site promotes gambling on Vega and Rugs.fun. You must be 18 or older (or of legal gambling age where you live), and these sites may be restricted in your country. Please gamble responsibly.</p><button type="button" class="btn ag-b" id="agOk">I'm 18+, enter</button><a class="ag-l" href="https://www.begambleaware.org" target="_blank" rel="noopener">Under 18 or need help? BeGambleAware.org</a></div></div><div class="lk" id="lk" hidden><div class="lk-bg" data-x></div><div class="glass lk-s" role="dialog" aria-modal="true" aria-labelledby="lkT"><button type="button" class="lk-x" data-x aria-label="Close">×</button><div class="lbl" id="lkL">Link account</div><h3 id="lkT">Link your Kick to win rewards</h3><ol class="lk-st" id="lkSt"></ol><div id="lkB"></div><p class="lk-n">Mockup flow · the real site checks the casino affiliate API</p></div></div>
+<div class="mnt" id="mnt" hidden><div><b>Back soon</b><p id="mntT"></p></div></div><div class="scrim" id="scrim"></div><div class="tapfx" id="tapfx" aria-hidden="true"></div><div class="ag" id="ag" hidden><div class="ag-c" role="dialog" aria-modal="true" aria-labelledby="agT"><h2 id="agT">18+ only</h2><p>This site promotes gambling on Vega and Rugs.fun. You must be 18 or older (or of legal gambling age where you live), and these sites may be restricted in your country. Please gamble responsibly.</p><button type="button" class="btn ag-b" id="agOk">I'm 18+, enter</button><a class="ag-l" href="https://www.begambleaware.org" target="_blank" rel="noopener">Under 18 or need help? BeGambleAware.org</a></div></div><div class="lk" id="lk" hidden><div class="lk-bg" data-x></div><div class="glass lk-s" role="dialog" aria-modal="true" aria-labelledby="lkT"><button type="button" class="lk-x" data-x aria-label="Close">×</button><div class="lbl" id="lkL">Link account</div><h3 id="lkT">Link your Kick to win rewards</h3><ol class="lk-st" id="lkSt"></ol><div id="lkB"></div><p class="lk-n">Mockup flow · the real site checks the casino affiliate API</p></div></div>
 
 <aside class="side" id="side" aria-label="Menu">
  <div class="brand"><div class="mark"><img src="data:image/jpeg;base64,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" alt="" class="own"></div><div><b>UseCodeAlex</b><small>Vega × Rugs.fun races</small></div></div>
@@ -1268,6 +1469,8 @@ body.gated{overflow:hidden}
    <div class="glass srch"><label class="lbl" for="q">Find your rank</label><div class="sbox"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Type a username" autocomplete="off" autocapitalize="off" spellcheck="false"></div><div class="qres" id="qres" aria-live="polite"></div></div><div class="pod" id="pod"></div>
    <div class="rows" id="rows"></div>
   </section>
+
+  <section class="sec reveal rugonly" id="strat" data-pg="leaderboard" hidden></section>
 
   <section class="sec reveal" id="daily" data-pg="weekly">
    <div class="glass sotd">
@@ -1564,7 +1767,7 @@ function renderWinners(r){const h=histFor(r),d=D[r];if(wSel>=h.length)wSel=0;con
 const end=Date.now()+((18*24+3)*3600+41*60+9)*1000;const prev={};
 function rugEnd(){let e=new Date(2026,10,1,23,59,59).getTime();while(e<=Date.now())e+=14*864e5;return e}
 function wkEnd(){const n=new Date(),e=new Date(n.getFullYear(),n.getMonth(),n.getDate()+((7-n.getDay())%7),23,59,59);return e.getTime()}
-function cd(){const s=Math.max(0,((race==='rugs'?rugEnd():end)-Date.now())/1000),p=n=>String(Math.floor(n)).padStart(2,'0');const v={d:p(s/86400),h:p(s%86400/3600),m:p(s%3600/60),s:p(s%60)};
+function cd(){const s=Math.max(0,(endFor(race)-Date.now())/1000),p=n=>String(Math.floor(n)).padStart(2,'0');const v={d:p(s/86400),h:p(s%86400/3600),m:p(s%3600/60),s:p(s%60)};
  $$('#cds b').forEach(b=>{const u=b.dataset.u;if(prev[u]!==v[u]){b.textContent=v[u];if(prev[u]!=null&&!reduce){b.classList.remove('flip');void b.offsetWidth;b.classList.add('flip')}}});Object.assign(prev,v);$$('.cdShort').forEach(e=>e.textContent=v.d+'d '+v.h+'h');$('#cdS').textContent=`${v.d}d ${v.h}h ${v.m}m`;
  const nw=new Date();const dd=(8-nw.getDay())%7||7;const nx=new Date(nw.getFullYear(),nw.getMonth(),nw.getDate()+dd);const r=Math.max(0,(nx-nw)/1000);$('#rs').textContent=Math.floor(r/86400)+'d '+p(r%86400/3600)+'h '+p(r%3600/60)+'m';const nr=$('#nhRs');if(nr)nr.textContent=$('#rs').textContent}
 setInterval(cd,1000);
@@ -1667,7 +1870,7 @@ function renderCi(){const el=$('#kCi');if(!el)return;const r=race,s=LK[r],ci=CI[
  if(!s||s.st<2){el.innerHTML=head+'<h4>Check in on stream</h4><p>Link your Kick first and you get your own check-in code for Alex\'s chat.</p><button type="button" class="btn kick lkOpen"><span class="kk">K</span>Link your Kick</button>';$$('#kCi .lkOpen').forEach(b=>b.onclick=openLk);return}
  if(ci.done){el.innerHTML=head+`<h4>You're checked in today</h4><p>@${s.kick} is in today's draw. Stay active in chat while Alex is live.</p><div class="kfoot"><span class="ok">✓ Entered</span><span>Draw in <span class="mono kUtc">${untilUTC()}</span></span></div>`;return}
  el.innerHTML=head+`<h4>Check in on stream</h4><p>${KICK.live?'Type this in Alex\'s Kick chat now. It counts as today\'s entry.':'Alex is offline. Type this in his Kick chat next time he\'s live.'}</p><div class="kcode"><b>!link ${ci.code}</b><button type="button" id="kCopy">Copy</button></div><div class="kfoot"><span>For @${s.kick} only</span><span>Draw in <span class="mono kUtc">${untilUTC()}</span></span></div>${KICK.live?'<button type="button" class="kdone" id="kSim">Mockup: pretend the bot saw it</button>':''}`;
- $('#kCopy').onclick=async()=>{try{await navigator.clipboard.writeText('!link '+ci.code)}catch(e){}toast('Copied !link '+ci.code)};
+ $('#kCopy').onclick=async()=>{try{await navigator.clipboard.writeText((CFG.site.giveaway.word||'!link')+' '+ci.code)}catch(e){}toast('Copied !link '+ci.code)};
  const sim=$('#kSim');if(sim)sim.onclick=()=>{ci.done=1;renderCi();toast('Checked in for today')}}
 $('#kDemo').onclick=()=>{KICK.live=!KICK.live;renderKick()};
 setInterval(()=>{if(KICK.live){KICK.viewers=Math.max(40,KICK.viewers+Math.round((Math.random()-.45)*6));const v=$('#kV');if(v)v.textContent=KICK.viewers;$$('.klv').forEach(k=>k.textContent='· '+KICK.viewers+' watching')}$$('.kUtc').forEach(k=>k.textContent=untilUTC())},5000);
@@ -1682,10 +1885,319 @@ function renderHome(r){const d=D[r],v=r==='vega';
 setInterval(()=>{const w=$('#nhWag');if(w)w.textContent=fmt(D[race].total,race);const a=$('#rs'),b=$('#nhRs');if(a&&b)b.textContent=a.textContent},3000);
 /* move live parts into the home layout */
 (function(){const c=$('#cds'),l=$('#lad'),g=$('.gc-screen');if(c)$('#nhCd').appendChild(c);if(l)$('.nh-lad').appendChild(l);if(g)$('#nhChart').appendChild(g)})();
+/* ===== site config (admin-controlled) ===== */
+const D0=JSON.parse(JSON.stringify(D));
+const DEF_HEAD={vega:'Track all in one place.',rugs:"DON'T GET RUGGED."};
+const DEF_PROMO='150 free spins, no deposit';
+function isoLocal(t){const d=new Date(t),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())}
+function defCfg(){
+ const hist={},week={};
+ ['vega','rugs'].forEach(r=>{const h=histFor(r);hist[r]=JSON.parse(JSON.stringify(h)).map(x=>({m:x.m,rows:x.rows.map(w=>({nm:w.nm,w:w.w,p:w.p,paid:!!w.paid,tx:w.paid?(r==='rugs'?'5Hq…sample':'Paid to Vega account'):'',at:''}))}));week[r]=JSON.parse(JSON.stringify(D[r].week));delete D[r].hist;delete D[r].week});
+ const race=(r,o)=>Object.assign({pool:D0[r].pool,prizes:D0[r].prizes.slice(),code:D0[r].code,ref:D0[r].ref,headline:DEF_HEAD[r],total:D0[r].total,miles:D0[r].miles.map(m=>m.slice()),board:null,hidden:[],adj:{},star:{auto:true,name:D0[r].sotd[0],val:String(D0[r].sotd[1])}},o);
+ return {v:1,
+  races:{vega:race('vega',{period:'Monthly',end:isoLocal(end),promo:DEF_PROMO}),rugs:race('rugs',{period:'Every 2 weeks',end:isoLocal(rugEnd()),promo:''})},
+  site:{ageGate:true,maintenance:false,maintText:'We are updating the leaderboard. Back soon.',
+   socials:{x:'https://x.com/Alexx_',kick:'https://kick.com/alexx',tg:'https://t.me/aleex6ix'},
+   kick:{live:false,title:KICK.title},
+   giveaway:{on:true,word:'!link',amount:'Daily SOL'},
+   strategy:{on:true,video:'',title:'CLIMB THE BOARD FASTER',p1:'On Standard mode, jump in as a round starts, cash out after about 5 seconds, then jump straight back in.',p2:'Do it 3 to 5 times a round. Every flip adds to your wager. Hold longer and the profit can grow bigger, but so does the chance the round rugs before you sell.',ex:'0.05 SOL in, out at 5s, back in. Four quick flips counts as 0.20 SOL wagered. Hold one longer for a bigger multiplier, but if it rugs first, that stake is gone.'}},
+  players:{autoApprove:false,mods:[{kick:'alexx',role:'Owner'}],links:[
+   {kick:'kaio_88',casino:'Ka***O',race:'vega',st:'pending',at:'2h ago'},{kick:'zuzu9',casino:'Zu***9',race:'vega',st:'pending',at:'5h ago'},
+   {kick:'solsurfer',casino:'7xKq…9fP2',race:'rugs',st:'pending',at:'1d ago'},{kick:'mo_rugs',casino:'4hTa…2LmQ',race:'rugs',st:'pending',at:'1d ago'},
+   {kick:'davee',casino:'Da***x',race:'vega',st:'ok',at:'3d ago'}]},
+  payouts:hist,weekly:week}}
+function mergeCfg(base,o){if(o==null)return base;if(Array.isArray(base)||Array.isArray(o)||typeof base!=='object'||base===null||typeof o!=='object')return o;const r={};for(const k of new Set([...Object.keys(base),...Object.keys(o)]))r[k]=k in o?mergeCfg(base[k],o[k]):base[k];return r}
+const CFG_DEF=defCfg();
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}
+function loadPub(){const s=lsGet('uca_pub');if(!s)return JSON.parse(JSON.stringify(CFG_DEF));try{return mergeCfg(CFG_DEF,JSON.parse(s))}catch(e){return JSON.parse(JSON.stringify(CFG_DEF))}}
+let CFG=loadPub();
+function endFor(r){const t=new Date(CFG.races[r].end).getTime();return isNaN(t)?(r==='rugs'?rugEnd():end):t}
+function solTxt(n){return (+n).toFixed(2)+' SOL'}
+function boardFor(rc,r){const base=(rc.board&&rc.board.length?rc.board:D0[r].top.concat(D0[r].rows)).map(p=>[String(p[0]),(+p[1]||0)+(+((rc.adj||{})[p[0]])||0)]).filter(p=>!(rc.hidden||[]).includes(p[0])).sort((a,b)=>b[1]-a[1]);while(base.length<3)base.push(['—',0]);return base}
+function buildH1(t,r){const ws=String(t).trim().split(/\s+/),half=Math.ceil(ws.length/2);return ws.map((w,i)=>(i===half&&ws.length>1?'<br>':i?' ':'')+`<span class="w${r==='vega'&&i>=half?' acc':''}" style="animation-delay:${(i*.07).toFixed(2)}s">${esc(w)}</span>`).join('')}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function bare(u){return String(u).replace(/^https?:\/\//,'').replace(/\/$/,'')}
+/* text swap: defaults in the page templates -> current config */
+let TXT_DEF={},TXT_CUR={},ATTR_DEF={};
+function curVals(c){const v=c.races.vega,r=c.races.rugs;return {
+ 'vegabet.promo/aleexx':bare(v.ref),'rugs.fun/?start=Aleex':bare(r.ref),'Aleexx':v.code,'Aleex':r.code,
+ '$1,500':'$'+(+v.pool).toLocaleString('en-US'),'1.50 SOL':solTxt(r.pool),
+ 'Top 10':'Top '+v.prizes.length,'top 10':'top '+v.prizes.length,'Top 5':'Top '+r.prizes.length,'top 5':'top '+r.prizes.length,
+ '150 free spins, no deposit':v.promo||DEF_PROMO,'!link':c.site.giveaway.word||'!link'}}
+const TXT_BASE=curVals(CFG_DEF);
+function mkRe(m){const ks=Object.keys(m).filter(k=>m[k]!==k).sort((a,b)=>b.length-a.length);if(!ks.length)return null;return new RegExp(ks.map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+(/\w$/.test(k)?'(?![\\w])':'')).join('|'),'g')}
+function swapText(root,m){const re=mkRe(m);if(!re)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;const todo=[];while(n=w.nextNode()){if(n.parentElement&&n.parentElement.closest('#adm,script,style'))continue;re.lastIndex=0;if(re.test(n.data))todo.push(n)}todo.forEach(t=>{re.lastIndex=0;t.data=t.data.replace(re,x=>m[x])})}
+function swapAttrs(root,c){const v=c.races.vega,r=c.races.rugs,s=c.site.socials;
+ const A={'https://vegabet.promo/aleexx':v.ref,'https://rugs.fun/?start=Aleex':r.ref,'https://x.com/Alexx_':s.x,'https://kick.com/alexx':s.kick,'https://t.me/aleex6ix':s.tg};
+ const els=root.querySelectorAll?[...(root.matches&&root.matches('a,[data-c]')?[root]:[]),...root.querySelectorAll('a[href],[data-c]')]:[];
+ els.forEach(e=>{if(e.closest('#adm'))return;const o=e.dataset.oh||e.getAttribute('href');if(o&&A[o]!==undefined){e.dataset.oh=o;e.setAttribute('href',A[o])}if(e.dataset.c){const oc=e.dataset.oc||e.dataset.c;e.dataset.oc=oc;e.dataset.c=oc==='Aleexx'?v.code:oc==='Aleex'?r.code:oc;const b=e.querySelector('b');if(b)b.textContent=e.dataset.c}})}
+const MO=new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes){if(n.nodeType===3){if(n.parentElement&&!n.parentElement.closest('#adm,script,style')){const re=mkRe(TXT_DEF);if(re){re.lastIndex=0;if(re.test(n.data)){re.lastIndex=0;n.data=n.data.replace(re,x=>TXT_DEF[x])}}}}else if(n.nodeType===1&&!n.closest('#adm')){swapText(n,TXT_DEF);swapAttrs(n,CFG)}}});
+function renderStrat(c){const el=$('#strat');if(!el)return;const s=c.site.strategy;el.dataset.pg=s.on?'leaderboard':'off';if(!s.on){el.hidden=true}else if(document.body.dataset.page==='leaderboard')el.hidden=false;
+ const u=String(s.video||'').trim();let v;const yt=u.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{6,})/);
+ if(yt)v=`<iframe src="https://www.youtube-nocookie.com/embed/${yt[1]}" title="Strategy demo video" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
+ else if(/^https:\/\/.+\.(mp4|webm|mov)(\?.*)?$/i.test(u))v=`<video src="${esc(u)}" controls playsinline preload="metadata"></video>`;
+ else if(/^https:\/\//.test(u))v=`<a class="st-ph" href="${esc(u)}" target="_blank" rel="noopener"><i></i>Watch the demo</a>`;
+ else v=`<div class="st-ph"><i></i>Demo video coming soon</div>`;
+ el.innerHTML=`<div class="glass st-w"><span class="st-tag">Alex's tip</span><h2 class="st-h">${esc(s.title)}</h2><p>${esc(s.p1)}</p><p>${esc(s.p2)}</p>${s.ex?`<div class="st-ex"><b>Example:</b> ${esc(s.ex)}</div>`:''}<div class="st-v">${v}</div></div>`}
+function applyCfg(c,first){CFG=c;
+ ['vega','rugs'].forEach(r=>{const rc=c.races[r],d=D[r],b=boardFor(rc,r);
+  d.pool=+rc.pool||0;d.poolTxt=r==='vega'?'$'+d.pool.toLocaleString('en-US'):solTxt(d.pool);d.prizes=rc.prizes.map(x=>+x||0);d.code=rc.code;d.ref=rc.ref;
+  d.miles=rc.miles.map(m=>[+m[0]||0,m[1]]).sort((a,b)=>a[0]-b[0]);if(!d.miles.length)d.miles=[[1,'Mystery drop']];d.total=+rc.total||0;
+  d.top=b.slice(0,3);d.rows=b.slice(3);
+  d.sotd=rc.star.auto?D0[r].sotd.slice():[rc.star.name||'—',r==='vega'?(+rc.star.val||0):rc.star.val];
+  d.h1=rc.headline.trim()===DEF_HEAD[r]?D0[r].h1:buildH1(rc.headline,r);
+  d.hist=(c.payouts[r]||[]).map(x=>({m:x.m,rows:x.rows.map(w=>({nm:w.nm,w:+w.w||0,p:+w.p||0,paid:!!w.paid}))}));if(!d.hist.length)d.hist=[{m:'No races yet',rows:[]}];
+  d.week=(c.weekly[r]||[]).slice()});
+ KICK.live=!!c.site.kick.live;KICK.title=c.site.kick.title||KICK.title;
+ const nv=curVals(c),prev=first?TXT_BASE:TXT_CUR,pm={};for(const k in nv)pm[prev[k]]=nv[k];
+ TXT_DEF={};for(const k in TXT_BASE)TXT_DEF[TXT_BASE[k]]=nv[k];
+ swapText(document.body,pm);TXT_CUR=nv;swapAttrs(document.body,c);
+ renderStrat(c);
+ const ck=$('#kCi'),kk=$('.kk2');if(kk)kk.style.display='';if(ck)ck.style.display=c.site.giveaway.on?'':'none';
+ const mn=$('#mnt');if(mn){mn.hidden=!c.site.maintenance;$('#mntT').textContent=c.site.maintText||'Back soon.'}
+ if(!first){apply(race);show(document.body.dataset.page||'home')}}
+MO.observe(document.body,{childList:true,subtree:true});
+
+/* ===== admin ===== */
+const IC={home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+ races:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg>',
+ players:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/></svg>',
+ payouts:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9.5v5M18 9.5v5"/></svg>',
+ site:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11"/></svg>',
+ history:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/></svg>'};
+const TABS=[['home','Home'],['races','Races'],['players','Players'],['payouts','Payouts'],['site','Site'],['history','History']];
+const A={open:false,user:null,tab:'home',r:'vega',draft:null,pub:CFG,hist:[],db:null,sync:'local',preview:false};
+try{A.hist=JSON.parse(lsGet('uca_hist')||'[]')}catch(e){A.hist=[]}
+const clone=o=>JSON.parse(JSON.stringify(o));
+function getP(o,p){return p.split('.').reduce((a,k)=>a==null?a:a[k],o)}
+function setP(o,p,v){const ks=p.split('.');let a=o;for(let i=0;i<ks.length-1;i++){if(a[ks[i]]==null)a[ks[i]]={};a=a[ks[i]]}a[ks[ks.length-1]]=v}
+function leaves(o,p,out){if(o&&typeof o==='object'){for(const k in o)leaves(o[k],p?p+'.'+k:k,out)}else out[p]=o;return out}
+function diffCount(a,b){const x=leaves(a,'',{}),y=leaves(b,'',{});let n=0;for(const k of new Set([...Object.keys(x),...Object.keys(y)]))if(x[k]!==y[k])n++;return n}
+function money(n,r){return r==='rugs'?(+n||0).toFixed(2)+' SOL':'$'+Math.round(+n||0).toLocaleString('en-US')}
+function fmtLeft(t){const s=Math.max(0,(t-Date.now())/1000);if(!s)return 'Ended';const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return d+'d '+h+'h '+m+'m'}
+
+function checks(c){const E=[],W=[];const go=(tab,r)=>({tab,r});
+ ['vega','rugs'].forEach(r=>{const rc=c.races[r],nm=r==='vega'?'Vega':'Rugs.fun',pool=+rc.pool;
+  if(!(pool>0))E.push([nm+': prize pool must be more than 0.',go('races',r)]);
+  const pz=rc.prizes.map(Number);if(!pz.length)E.push([nm+': add at least one paid place.',go('races',r)]);
+  if(pz.some(x=>isNaN(x)||x<0))E.push([nm+': every prize must be a number of 0 or more.',go('races',r)]);
+  const sum=Math.round(pz.reduce((a,b)=>a+(+b||0),0)*100)/100;
+  if(pool>0&&sum>pool+1e-9)E.push([`${nm}: prizes add up to ${money(sum,r)}, more than the ${money(pool,r)} pool.`,go('races',r)]);
+  else if(pool>0&&sum<pool-1e-9)W.push([`${nm}: ${money(pool-sum,r)} of the pool isn't given to any place.`,go('races',r)]);
+  if(pz.some((x,i)=>i&&x>pz[i-1]))W.push([nm+': a lower place pays more than the place above it.',go('races',r)]);
+  const t=new Date(rc.end).getTime();if(isNaN(t))E.push([nm+': set a race end date.',go('races',r)]);else if(t<Date.now())E.push([nm+': the race end date is in the past.',go('races',r)]);
+  if(!String(rc.code).trim())E.push([nm+': the casino code is empty.',go('races',r)]);
+  if(!/^https:\/\/\S+\.\S+/.test(rc.ref))E.push([nm+': the sign-up link must start with https://',go('races',r)]);
+  if(!String(rc.headline).trim())W.push([nm+': the hero headline is empty.',go('races',r)]);
+  const ml=rc.miles.map(m=>+m[0]);if(ml.some(x=>!(x>0)))E.push([nm+': every goal needs an amount above 0.',go('races',r)]);
+  if(!rc.star.auto&&!String(rc.star.name).trim())E.push([nm+': pick a player for '+(r==='vega'?'Star':'Survivor')+' of the Week, or switch to auto.',go('players',r)]);
+  (c.payouts[r]||[]).forEach(x=>x.rows.forEach(w=>{if(w.paid&&r==='rugs'&&!String(w.tx||'').trim())W.push([`Rugs.fun ${x.m}: ${w.nm} is marked paid with no transaction hash.`,go('payouts',r)])}));
+ });
+ const s=c.site,soc=s.socials;[['X',soc.x],['Kick',soc.kick],['Telegram',soc.tg]].forEach(([n,u])=>{if(u&&!/^https:\/\/\S+\.\S+/.test(u))E.push([n+' link must start with https://',go('site')])});
+ if(s.strategy.on&&!String(s.strategy.video).trim())W.push(['Strategy section is on but has no video yet. A placeholder will show.',go('site')]);
+ if(s.strategy.video&&!/^https:\/\//.test(s.strategy.video))E.push(['Strategy video link must start with https://',go('site')]);
+ if(s.giveaway.on&&!/^!\w+$/.test(s.giveaway.word))E.push(['Giveaway chat word must start with ! and have no spaces (e.g. !link).',go('site')]);
+ if(s.maintenance)W.push(['Maintenance mode is on. Visitors will only see the "back soon" screen.',go('site')]);
+ const pend=c.players.links.filter(l=>l.st==='pending').length;
+ return {E,W,pend}}
+
+function admEl(){let a=$('#adm');if(a)return a;a=document.createElement('div');a.id='adm';a.className='adm';a.hidden=true;a.setAttribute('role','dialog');a.setAttribute('aria-label','UseCodeAlex admin');document.body.appendChild(a);
+ a.addEventListener('input',onInput);a.addEventListener('change',onInput);a.addEventListener('click',onClick);return a}
+function saveDraft(){lsSet('uca_draft',JSON.stringify(A.draft))}
+let dT=0;function onInput(e){const t=e.target;if(t.dataset.adj!=null){const r=A.r,v=t.value===''?0:+t.value;A.draft.races[r].adj=A.draft.races[r].adj||{};if(!v)delete A.draft.races[r].adj[t.dataset.adj];else A.draft.races[r].adj[t.dataset.adj]=v;meta();clearTimeout(dT);dT=setTimeout(saveDraft,250);return}
+ const k=t.dataset.k;if(!k)return;let v=t.type==='checkbox'?t.checked:t.value;if(t.dataset.t==='n')v=t.value===''?'':+t.value;setP(A.draft,k,v);
+ if(t.dataset.re&&e.type==='change'){saveDraft();render();return}if(t.dataset.re)return;meta();clearTimeout(dT);dT=setTimeout(saveDraft,250)}
+function toastA(m){const t=$('#adm .tst');if(!t)return;t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200)}
+
+function fld(lbl,k,o={}){const v=getP(A.draft,k);const tp=o.type||'text';
+ if(tp==='area')return `<label class="f"><span class="lb">${lbl}</span><textarea data-k="${k}" ${o.ph?`placeholder="${esc(o.ph)}"`:''}>${esc(v)}</textarea>${o.hint?`<div class="hint">${o.hint}</div>`:''}</label>`;
+ return `<label class="f"><span class="lb">${lbl}</span><input type="${tp}" data-k="${k}" ${tp==='number'?'data-t="n" inputmode="decimal" step="any"':''} value="${esc(v)}" ${o.ph?`placeholder="${esc(o.ph)}"`:''}>${o.hint?`<div class="hint">${o.hint}</div>`:''}</label>`}
+function tgl(lbl,sub,k,re){return `<label class="glz atg"><span><b>${lbl}</b>${sub?`<small>${sub}</small>`:''}</span><span class="sw2"><input type="checkbox" data-k="${k}" ${re?'data-re="1"':''} ${getP(A.draft,k)?'checked':''}><i></i></span></label>`}
+function seg(){return `<div class="seg" role="tablist" aria-label="Casino">${['vega','rugs'].map(r=>`<button type="button" data-race="${r}" class="${A.r===r?'on':''}" aria-selected="${A.r===r}">${r==='vega'?'Vega':'Rugs.fun'}</button>`).join('')}</div>`}
+function navCounts(){const c=checks(A.draft);const unpaid=['vega','rugs'].reduce((n,r)=>n+(A.draft.payouts[r]||[]).reduce((m,x)=>m+x.rows.filter(w=>!w.paid).length,0),0);return {players:c.pend,payouts:unpaid}}
+
+function vHome(){const d=A.draft,c=checks(d),nc=navCounts();
+ const st=r=>{const rc=d.races[r];return `<div class="glz card stat"><div class="k">${r==='vega'?'Vega':'Rugs.fun'} race</div><div class="v">${fmtLeft(new Date(rc.end).getTime())}</div><div class="s">${rc.period} · ${money(rc.pool,r)} · top ${rc.prizes.length} paid</div></div>`};
+ const linked=d.players.links.filter(l=>l.st==='ok').length;
+ return `<div class="hd"><h1>Home</h1></div>
+ <div class="agrid">${st('vega')}${st('rugs')}
+ <div class="glz card stat"><div class="k">Casino data</div><div class="v" style="color:var(--y)">Sample data</div><div class="s">Live once the Vega and Rugs.fun APIs are connected</div></div>
+ <div class="glz card stat"><div class="k">Linked players</div><div class="v">${linked}</div><div class="s" style="color:${c.pend?'var(--y)':'var(--mut)'}">${c.pend} waiting for approval</div></div></div>
+ <h2>To do</h2>
+ <button type="button" class="glz todo ${c.pend?'':'done'}" data-tab="players"><span>${c.pend?c.pend+(c.pend>1?' account links':' account link')+' to approve':'No links waiting'}</span><em>${c.pend?'Review':'✓'}</em></button>
+ <button type="button" class="glz todo ${nc.payouts?'':'done'}" data-tab="payouts"><span>${nc.payouts?nc.payouts+(nc.payouts>1?' winners':' winner')+' not marked paid':'All winners paid'}</span><em>${nc.payouts?'Open payouts':'✓'}</em></button>
+ <button type="button" class="glz todo ${c.E.length?'':'done'}" data-act="checks"><span>${c.E.length?c.E.length+(c.E.length>1?' problems':' problem')+' to fix before publishing':c.W.length?c.W.length+(c.W.length>1?' things':' thing')+' to check':'No problems found'}</span><em>${c.E.length||c.W.length?'View':'✓'}</em></button>
+ <h2>Stream</h2>
+ ${tgl('Alex is live on Kick','Mockup switch. The real site reads this from Kick automatically.','site.kick.live')}
+ ${fld('Stream title','site.kick.title')}`}
+
+function vRaces(){const r=A.r,k='races.'+r,rc=A.draft.races[r],sym=r==='vega'?'$':'SOL';const sum=rc.prizes.reduce((a,b)=>a+(+b||0),0),pool=+rc.pool||0;
+ const sc=sum>pool+1e-9?'bad':sum<pool-1e-9?'warn':'ok';
+ return `<div class="hd"><h1>Races</h1>${seg()}</div>
+ <div class="agrid">${fld('Prize pool ('+sym+')',k+'.pool',{type:'number'})}<label class="f"><span class="lb">Repeats</span><select data-k="${k}.period">${['Weekly','Every 2 weeks','Monthly'].map(p=>`<option ${rc.period===p?'selected':''}>${p}</option>`).join('')}</select></label>${fld('Race ends',k+'.end',{type:'datetime-local',hint:'Shown in your local time. The countdown on the site follows this.'})}</div>
+ <h2>Prize split</h2>
+ ${rc.prizes.map((p,i)=>`<div class="apl"><span class="n">#${i+1}</span><input type="number" data-t="n" step="any" inputmode="decimal" data-k="${k}.prizes.${i}" value="${esc(p)}" aria-label="Prize for place ${i+1}"><button type="button" class="ax" data-act="delPlace" data-i="${i}" aria-label="Remove place ${i+1}">×</button></div>`).join('')}
+ <div class="arow sp"><button type="button" class="addb" data-act="addPlace">+ Add place</button><span class="sum ${sc}" id="admSum">${money(sum,r)} of ${money(pool,r)} given out</span></div>
+ <h2>Codes and links</h2>
+ <div class="agrid">${fld(r==='vega'?'Vega code':'Rugs.fun code',k+'.code')}${fld('Sign-up link',k+'.ref',{type:'url'})}${r==='vega'?fld('Promo line',k+'.promo',{hint:'Shown in the steps and the Join Vega banner.'}):''}</div>
+ <h2>Hero</h2>${fld('Headline',k+'.headline')}
+ <h2>Community goals</h2>
+ <div class="agrid">${fld('Community total so far ('+sym+')',k+'.total',{type:'number',hint:'Fills in from the API once connected. Goals stay mystery drops until you reveal them live.'})}</div><span class="lb">Goals (amount · reward)</span>
+ ${rc.miles.map((m,i)=>`<div class="ml"><input type="number" data-t="n" step="any" data-k="${k}.miles.${i}.0" value="${esc(m[0])}" aria-label="Goal ${i+1} amount"><input type="text" data-k="${k}.miles.${i}.1" value="${esc(m[1])}" aria-label="Goal ${i+1} reward"><button type="button" class="ax" data-act="delMile" data-i="${i}" aria-label="Remove goal ${i+1}">×</button></div>`).join('')}
+ <button type="button" class="addb" data-act="addMile">+ Add goal</button>`}
+
+function vPlayers(){const r=A.r,k='races.'+r,rc=A.draft.races[r],d=A.draft;const b=(rc.board&&rc.board.length?rc.board:D0[r].top.concat(D0[r].rows));const hid=rc.hidden||[];
+ const links=d.players.links.map((l,i)=>[l,i]).filter(([l])=>l.race===r);
+ return `<div class="hd"><h1>Players</h1>${seg()}</div>
+ <h2>Account links</h2>
+ ${tgl('Auto-approve links','New links go live straight away. Only clashes (two Kick accounts on one casino name) wait for you.','players.autoApprove')}
+ <div class="list">${links.length?links.map(([l,i])=>`<div class="glz li"><div class="agr"><b>@${esc(l.kick)}</b><small>${r==='vega'?'Vega':'Wallet'}: ${esc(l.casino)} · ${esc(l.at)}</small></div>${l.st==='pending'?`<button type="button" class="gbtn" data-act="link" data-i="${i}" data-v="no">Reject</button><button type="button" class="pbtn" data-act="link" data-i="${i}" data-v="ok">Approve</button>`:`<span class="apill ${l.st==='ok'?'paid':'hid'}">${l.st==='ok'?'Approved':'Rejected'}</span><button type="button" class="lnk" data-act="link" data-i="${i}" data-v="pending">Undo</button>`}</div>`).join(''):'<div class="hint">No links yet.</div>'}</div>
+ <h2>${r==='vega'?'Star':'Survivor'} of the Week</h2>
+ ${tgl('Pick automatically',r==='vega'?'Top weekly wager wins.':'Biggest climber of the week wins.',k+'.star.auto',1)}
+ ${rc.star.auto?'':`<div class="ag2">${fld('Player',k+'.star.name')}${fld(r==='vega'?'Weekly wager ($)':'Places climbed',k+'.star.val')}</div>`}
+ <h2>Leaderboard</h2>
+ <div class="hint" style="margin-bottom:10px">${rc.board&&rc.board.length?'Using your imported list.':'Using sample data until the API is connected.'} Hide a player to remove them from the board, or fix a wager with + or − amounts.</div>
+ <div class="glz atw"><table class="tbl"><thead><tr><th>Player</th><th>Wager</th><th>Fix (±)</th><th></th></tr></thead><tbody>
+ ${b.map(p=>{const h=hid.includes(p[0]);return `<tr><td>${esc(p[0])} ${h?'<span class="apill hid">Hidden</span>':''}</td><td>${money(p[1],r)}</td><td style="width:120px"><input type="number" step="any" data-adj="${esc(p[0])}" value="${(rc.adj||{})[p[0]]||''}" placeholder="0" aria-label="Wager fix for ${esc(p[0])}"></td><td style="text-align:right"><button type="button" class="lnk" data-act="hide" data-n="${esc(p[0])}">${h?'Show':'Hide'}</button></td></tr>`}).join('')}
+ </tbody></table></div>
+ <h2>Import wagers</h2>
+ <label class="f"><span class="lb">Paste one player per line: name, wager</span><textarea id="admImp" placeholder="Da***x, 20402&#10;Ni***p, 16920"></textarea></label>
+ <div class="arow" style="margin-top:8px"><button type="button" class="gbtn" data-act="import">Use this list</button>${rc.board&&rc.board.length?'<button type="button" class="lnk" data-act="clearBoard">Back to sample data</button>':''}</div>
+ <div class="hint">For Rugs.fun if there's no API. Vega fills in automatically once its API is connected.</div>
+ <h2>Admins</h2>
+ <div class="list">${d.players.mods.map((m,i)=>`<div class="glz li"><div class="agr"><b>@${esc(m.kick)}</b><small>${m.role==='Owner'?'Can change everything':'Can approve links and pick winners'}</small></div>${m.role==='Owner'&&i===0?'<span class="apill paid">Owner</span>':`<select data-k="players.mods.${i}.role" style="width:auto"><option ${m.role==='Mod'?'selected':''}>Mod</option><option ${m.role==='Owner'?'selected':''}>Owner</option></select><button type="button" class="ax" data-act="delMod" data-i="${i}" aria-label="Remove @${esc(m.kick)}">×</button>`}</div>`).join('')}</div>
+ <div class="arow" style="margin-top:8px"><input type="text" id="admMod" placeholder="Kick username" style="max-width:240px"><button type="button" class="gbtn" data-act="addMod">Add mod</button></div>`}
+
+function vPayouts(){const r=A.r,list=A.draft.payouts[r]||[];let paid=0,pend=0;list.forEach(x=>x.rows.forEach(w=>w.paid?paid+=+w.p||0:pend+=+w.p||0));
+ return `<div class="hd"><h1>Payouts</h1>${seg()}</div>
+ <div class="agrid"><div class="glz card stat"><div class="k">Paid so far</div><div class="v" style="color:var(--g)">${money(paid,r)}</div></div><div class="glz card stat"><div class="k">Still to pay</div><div class="v" style="color:${pend?'var(--y)':'var(--mut)'}">${money(pend,r)}</div></div></div>
+ <div class="arow" style="margin-top:14px;flex-wrap:wrap"><button type="button" class="gbtn" data-act="closeRace">End current race and create payout list</button></div>
+ <div class="hint">Takes the current top ${A.draft.races[r].prizes.length} and their prizes. They show on the Winners page as Pending until you mark them paid.</div>
+ ${list.map((x,xi)=>`<h2>${esc(x.m)}</h2><div class="glz atw"><table class="tbl"><thead><tr><th>#</th><th>Player</th><th>Prize</th><th>Paid</th><th>${r==='rugs'?'Tx hash':'Note'}</th></tr></thead><tbody>
+  ${x.rows.map((w,i)=>`<tr><td style="color:var(--mut)">${i+1}</td><td>${esc(w.nm)}<div class="hint" style="margin:0">${money(w.w,r)} wagered</div></td><td>${money(w.p,r)}</td><td><span class="sw2"><input type="checkbox" data-k="payouts.${r}.${xi}.rows.${i}.paid" data-re="1" ${w.paid?'checked':''} aria-label="Mark ${esc(w.nm)} paid"><i></i></span></td><td><input type="text" data-k="payouts.${r}.${xi}.rows.${i}.tx" value="${esc(w.tx)}" placeholder="${r==='rugs'?'Solana tx':'optional'}"></td></tr>`).join('')||'<tr><td colspan="5" class="hint">No winners.</td></tr>'}
+ </tbody></table></div><button type="button" class="lnk" data-act="delRace" data-i="${xi}">Delete this list</button>`).join('')}
+ <h2>${r==='vega'?'Star':'Survivor'} of the Week winners</h2>
+ ${(A.draft.weekly[r]||[]).map((w,i)=>`<div class="ml" style="grid-template-columns:90px minmax(0,1fr) minmax(0,1fr) 34px"><input type="text" data-k="weekly.${r}.${i}.wk" value="${esc(w.wk)}" aria-label="Week"><input type="text" data-k="weekly.${r}.${i}.nm" value="${esc(w.nm)}" aria-label="Player"><input type="text" data-k="weekly.${r}.${i}.v" value="${esc(w.v)}" aria-label="Result"><button type="button" class="ax" data-act="delWeek" data-i="${i}" aria-label="Remove">×</button></div>`).join('')}
+ <button type="button" class="addb" data-act="addWeek">+ Add weekly winner</button>`}
+
+function vSite(){const s='site';return `<div class="hd"><h1>Site</h1></div>
+ ${tgl('18+ age check','Asks visitors to confirm they are 18+ on their first visit.','site.ageGate')}
+ ${tgl('Maintenance mode','Hides the site behind a "back soon" screen.','site.maintenance',1)}
+ ${A.draft.site.maintenance?fld('Maintenance message','site.maintText'):''}
+ <h2>Socials</h2><div class="agrid">${fld('X','site.socials.x',{type:'url'})}${fld('Kick','site.socials.kick',{type:'url'})}${fld('Telegram','site.socials.tg',{type:'url'})}</div>
+ <h2>Daily Kick giveaway</h2>
+ ${tgl('Show the giveaway check-in','Linked viewers type the chat word plus their code in Kick chat.','site.giveaway.on')}
+ <div class="agrid">${fld('Chat word','site.giveaway.word',{ph:'!link'})}</div>
+ <h2>Rugs.fun strategy section</h2>
+ ${tgl('Show strategy section','Sits under the Rugs.fun leaderboard.','site.strategy.on')}
+ ${fld('Video link','site.strategy.video',{type:'url',ph:'https://… (.mp4, YouTube or Kick clip)',hint:'Paste a link to the clip. MP4 and YouTube play on the page; other links open in a new tab.'})}
+ ${fld('Heading','site.strategy.title')}${fld('First paragraph','site.strategy.p1',{type:'area'})}${fld('Second paragraph','site.strategy.p2',{type:'area'})}${fld('Example','site.strategy.ex',{type:'area'})}`}
+
+function vHistory(){return `<div class="hd"><h1>History</h1></div>
+ <div class="hint" style="margin-bottom:12px">Every publish is saved here. Restore loads that version as a draft, so you can check it before publishing again.</div>
+ <div class="list">${A.hist.length?A.hist.map((h,i)=>`<div class="glz li"><div class="agr"><b>${new Date(h.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</b><small>Published by @${esc(h.by)}${i===0?' · live now':''}</small></div>${i===0?'<span class="apill paid">Live</span>':`<button type="button" class="gbtn" data-act="restore" data-i="${i}">Restore</button>`}</div>`).join(''):'<div class="hint">Nothing published yet.</div>'}</div>
+ <h2>Draft</h2><button type="button" class="gbtn" data-act="discard">Discard unsaved changes</button>`}
+
+function miniPv(){const d=A.draft,r=A.r,rc=d.races[r],b=boardFor(rc,r);
+ return `<div class="pvh"><span>Live preview · draft</span><button type="button" class="gbtn" data-act="preview" style="padding:5px 11px;font-size:12px">Full preview</button></div>
+ <div class="amini ${r}"><div class="k">${r==='vega'?'PRIZE POOL':'RACE POOL'}</div><div class="pool">${money(rc.pool,r)}</div><div class="lbx">LEADERBOARD</div><div class="hl">${esc(rc.headline)}</div>
+ <div class="apod">${[1,0,2].map(i=>`<div>${esc(b[i][0])}<span style="height:${[86,62,48][[0,1,2].indexOf(i)]}px">${i+1}</span></div>`).join('')}</div>
+ <div class="mrows">${b.slice(3,7).map((p,i)=>`<div><span>${i+4} · ${esc(p[0])}</span><span>${money(p[1],r)}</span></div>`).join('')}</div>
+ <div class="mend">Ends in ${fmtLeft(new Date(rc.end).getTime())} · top ${rc.prizes.length} paid</div></div>
+ <div class="hint" style="margin-top:12px">Code <b>${esc(rc.code)}</b> · ${esc(bare(rc.ref))}</div>`}
+
+function role(){const m=A.pub.players.mods.find(x=>x.kick.toLowerCase()===String(A.user).toLowerCase());return m?m.role:null}
+function tabsFor(){return role()==='Mod'?TABS.filter(t=>['home','players','payouts'].includes(t[0])):TABS}
+function render(){const a=admEl();a.dataset.r=A.r;
+ if(!A.user){a.innerHTML=`<div class="bgl"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div><div class="awrap"><div class="lgn"><div class="glz"><img src="${$('.o-ava')?$('.o-ava').src:''}" alt=""><h1>UseCodeAlex admin</h1><p>Sign in with the Kick account that owns this site, or one Alex has added as a mod.</p><label class="f" style="text-align:left"><span class="lb">Kick username (mockup)</span><input type="text" id="admU" value="alexx" autocomplete="username"></label><div style="height:12px"></div><button type="button" class="kbtn" data-act="login"><b>K</b>Sign in with Kick</button><div class="lerr" id="admLe"></div><p style="margin:14px 0 0;font-size:12px">Mockup: the live site uses Kick's real sign-in.</p><button type="button" class="lnk" data-act="close" style="margin-top:6px">Back to site</button></div></div></div><div class="tst"></div>`;return}
+ const sc=a.querySelector('main')?a.scrollTop:0;const tabs=tabsFor();if(!tabs.some(t=>t[0]===A.tab))A.tab='home';
+ const nc=navCounts();const body={home:vHome,races:vRaces,players:vPlayers,payouts:vPayouts,site:vSite,history:vHistory}[A.tab]();
+ const ava=$('.o-ava')?$('.o-ava').src:'';
+ a.innerHTML=`<div class="bgl"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div><div class="awrap">
+ <header class="tb"><div class="awho"><img src="${ava}" alt=""><div><b>UseCodeAlex admin</b><small>Signed in with Kick · @${esc(A.user)} (${role()})</small></div></div>
+ <div class="acts"><span class="chip uns" id="admUns"></span><button type="button" class="chip" id="admCk" data-act="checks"></button><button type="button" class="gbtn" data-act="preview">Preview</button><button type="button" class="pbtn" data-act="publish">Publish</button><button type="button" class="gbtn" data-act="close" aria-label="Close admin" style="padding:8px 12px">✕</button></div></header>
+ <div class="lay"><nav class="nav" aria-label="Admin sections">${tabs.map(([t,l])=>`<button type="button" data-tab="${t}" class="${A.tab===t?'on':''}">${IC[t]}${l}${nc[t]?`<span class="ct">${nc[t]}</span>`:''}</button>`).join('')}<hr><div class="sync" id="admSync"></div><button type="button" data-act="logout">Sign out</button></nav>
+ <main>${body}</main><aside class="apv" id="admPv">${miniPv()}</aside></div>
+ <div class="pubbar" id="admPb"><span id="admPbT"></span><span><button type="button" data-act="preview">Preview</button> <button type="button" data-act="publish">Publish</button></span></div>
+ <nav class="bb" aria-label="Admin sections">${tabs.filter(t=>t[0]!=='history').map(([t,l])=>`<button type="button" data-tab="${t}" class="${A.tab===t?'on':''}">${IC[t]}<span>${l}</span>${nc[t]?`<span class="ct">${nc[t]}</span>`:''}</button>`).join('')}</nav>
+ <div class="mdl" id="admMdl" hidden></div></div><div class="tst"></div>`;
+ a.scrollTop=sc;meta()}
+function meta(){const a=$('#adm');if(!a||!A.user)return;const n=diffCount(A.draft,A.pub),c=checks(A.draft);
+ const u=$('#admUns');if(u){u.textContent=n?n+' unsaved':'All published';u.className='chip uns '+(n?'warn':'ok')}
+ const k=$('#admCk');if(k){k.textContent=c.E.length?c.E.length+' to fix':c.W.length?c.W.length+' to check':'Checks OK';k.className='chip '+(c.E.length?'bad':c.W.length?'warn':'ok')}
+ const pb=$('#admPb');if(pb){pb.classList.toggle('show',n>0);pb.classList.toggle('bad',c.E.length>0);$('#admPbT').textContent=c.E.length?c.E.length+' to fix · '+n+' changes':n+' unsaved changes'}
+ const pv=$('#admPv');if(pv)pv.innerHTML=miniPv();
+ const sm=$('#admSum');if(sm){const rc=A.draft.races[A.r],sum=rc.prizes.reduce((x,y)=>x+(+y||0),0),pool=+rc.pool||0;sm.textContent=money(sum,A.r)+' of '+money(pool,A.r)+' given out';sm.className='sum '+(sum>pool+1e-9?'bad':sum<pool-1e-9?'warn':'ok')}
+ const sy=$('#admSync');if(sy)sy.innerHTML=A.sync==='db'?'<span style="color:var(--g)">●</span> Synced across devices':'<span style="color:var(--y)">●</span> Saved on this device';
+ $$('#adm [data-k]').forEach(i=>i.classList.remove('err'))}
+function showChecks(){const c=checks(A.draft),m=$('#admMdl');if(!m)return;
+ m.innerHTML=`<div class="glz"><div class="arow sp"><h1 style="font-size:20px">Checks</h1><button type="button" class="ax" data-act="mdlX" aria-label="Close">×</button></div>
+ ${!c.E.length&&!c.W.length?'<p class="hint" style="font-size:14px">No problems found. Ready to publish.</p>':''}
+ ${c.E.map(([t,g],i)=>`<div class="ck e"><i></i><span>${esc(t)}</span><button type="button" class="lnk" data-act="goto" data-tab="${g.tab}" data-race="${g.r||''}">Fix</button></div>`).join('')}
+ ${c.W.map(([t,g])=>`<div class="ck w"><i></i><span>${esc(t)}</span><button type="button" class="lnk" data-act="goto" data-tab="${g.tab}" data-race="${g.r||''}">Go</button></div>`).join('')}
+ <p class="hint">Red blocks publishing. Yellow is a heads-up only.</p></div>`;m.hidden=false}
+
+async function publish(){const c=checks(A.draft);if(c.E.length){showChecks();toastA('Fix '+c.E.length+' problem'+(c.E.length>1?'s':'')+' before publishing');return}
+ if(!diffCount(A.draft,A.pub)){toastA('Nothing new to publish');return}
+ A.pub=clone(A.draft);A.hist.unshift({at:Date.now(),by:A.user,cfg:clone(A.pub)});A.hist=A.hist.slice(0,10);
+ lsSet('uca_pub',JSON.stringify(A.pub));lsSet('uca_hist',JSON.stringify(A.hist));lsSet('uca_draft',null);
+ applyCfg(clone(A.pub));let msg='Published to the main site';
+ if(A.db){try{await A.db.doc('site/pub').set({cfg:JSON.stringify(A.pub),at:Date.now(),by:A.user});await A.db.doc('site/hist').set({list:JSON.stringify(A.hist)});A.sync='db'}catch(e){A.sync='local';msg='Published on this device. Sync failed, try again.'}}
+ render();toastA(msg)}
+function startPreview(){A.preview=true;applyCfg(clone(A.draft));$('#adm').hidden=true;document.documentElement.style.overflow='';let b=$('#admBar');if(!b){b=document.createElement('div');b.id='admBar';b.className='admbar';document.body.appendChild(b)}
+ b.innerHTML='<span><b>Preview</b> · draft, not live yet</span><button type="button" id="admBk">Back to admin</button><button type="button" class="p" id="admBp">Publish</button>';b.hidden=false;
+ $('#admBk').onclick=()=>{endPreview();openAdm()};$('#admBp').onclick=()=>{endPreview();openAdm();publish()}}
+function endPreview(){A.preview=false;const b=$('#admBar');if(b)b.hidden=true;applyCfg(clone(A.pub))}
+
+function onClick(e){const t=e.target.closest('button,[data-tab],[data-race]');if(!t||!t.closest('#adm'))return;const act=t.dataset.act,d=A.draft;
+ if(act==='goto'){A.tab=t.dataset.tab;if(t.dataset.race)A.r=t.dataset.race;render();return}
+ if(t.dataset.tab&&!act){A.tab=t.dataset.tab;render();$('#adm').scrollTop=0;return}
+ if(t.dataset.race&&!act){A.r=t.dataset.race;render();return}
+ const r=A.r,rc=d.races[r],i=+t.dataset.i;
+ switch(act){
+ case 'login':{const u=($('#admU').value||'').trim().replace(/^@/,'');const m=A.pub.players.mods.find(x=>x.kick.toLowerCase()===u.toLowerCase());if(!m){$('#admLe').textContent='@'+(u||'?')+' is not an admin on this site.';return}A.user=m.kick;try{sessionStorage.setItem('uca_admin',m.kick)}catch(er){}render();return}
+ case 'logout':A.user=null;try{sessionStorage.removeItem('uca_admin')}catch(er){}render();return;
+ case 'close':closeAdm();return;
+ case 'checks':showChecks();return;
+ case 'mdlX':$('#admMdl').hidden=true;return;
+ case 'publish':publish();return;
+ case 'preview':startPreview();return;
+ case 'addPlace':rc.prizes.push(0);break;
+ case 'delPlace':rc.prizes.splice(i,1);break;
+ case 'addMile':{const l=rc.miles[rc.miles.length-1];rc.miles.push([l?(+l[0]||0)*1.5:1000,'Mystery drop']);break}
+ case 'delMile':rc.miles.splice(i,1);break;
+ case 'link':d.players.links[i].st=t.dataset.v;break;
+ case 'hide':{const n=t.dataset.n,h=rc.hidden=rc.hidden||[];const j=h.indexOf(n);j<0?h.push(n):h.splice(j,1);break}
+ case 'import':{const rows=($('#admImp').value||'').split(/\n/).map(l=>l.split(/[,\t;]/)).filter(p=>p.length>=2&&p[0].trim()&&!isNaN(parseFloat(p[1]))).map(p=>[p[0].trim(),parseFloat(p[1])]);if(!rows.length){toastA('No rows found. Use: name, wager');return}rc.board=rows;rc.adj={};rc.hidden=[];toastA(rows.length+' players imported');break}
+ case 'clearBoard':rc.board=null;break;
+ case 'addMod':{const u=($('#admMod').value||'').trim().replace(/^@/,'');if(!u)return;if(d.players.mods.some(m=>m.kick.toLowerCase()===u.toLowerCase())){toastA('@'+u+' is already an admin');return}d.players.mods.push({kick:u,role:'Mod'});break}
+ case 'delMod':d.players.mods.splice(i,1);break;
+ case 'closeRace':{const b=boardFor(rc,r),pz=rc.prizes;const e=new Date(rc.end);const lbl=r==='vega'?e.toLocaleString('en-US',{month:'long',year:'numeric'}):'Ends '+e.toLocaleString('en-US',{month:'short',day:'numeric'});
+  d.payouts[r]=d.payouts[r]||[];d.payouts[r].unshift({m:lbl,rows:pz.map((p,j)=>b[j]&&b[j][0]!=='—'?{nm:b[j][0],w:b[j][1],p:+p||0,paid:false,tx:'',at:''}:null).filter(Boolean)});toastA('Payout list created. Set the next race end date in Races.');break}
+ case 'delRace':d.payouts[r].splice(i,1);break;
+ case 'addWeek':(d.weekly[r]=d.weekly[r]||[]).unshift({wk:'Week',nm:'',v:''});break;
+ case 'delWeek':d.weekly[r].splice(i,1);break;
+ case 'restore':A.draft=clone(mergeCfg(CFG_DEF,A.hist[i].cfg));toastA('Loaded as draft. Publish to make it live.');break;
+ case 'discard':A.draft=clone(A.pub);lsSet('uca_draft',null);toastA('Changes discarded');break;
+ default:return}
+ saveDraft();render()}
+
+function openAdm(){const a=admEl();if(!A.draft){let s=lsGet('uca_draft');try{A.draft=s?mergeCfg(CFG_DEF,JSON.parse(s)):clone(A.pub)}catch(e){A.draft=clone(A.pub)}}
+ try{A.user=A.user||sessionStorage.getItem('uca_admin')}catch(e){}
+ A.open=true;a.hidden=false;document.documentElement.style.overflow='hidden';render();a.scrollTop=0}
+function closeAdm(){const a=$('#adm');if(a)a.hidden=true;A.open=false;document.documentElement.style.overflow='';if(location.hash==='#admin')history.replaceState(null,'',location.pathname+location.search)}
+function admInit(){addEventListener('hashchange',()=>{if(location.hash==='#admin')openAdm()});if(location.hash==='#admin')openAdm();
+ setInterval(()=>{if(A.open&&A.user&&A.tab==='home'){const pv=$('#admPv');if(pv)pv.innerHTML=miniPv()}},30000);
+ (async()=>{try{if(!window.claude||!window.claude.use)return;const db=await window.claude.use('db');if(!db)return;A.db=db;A.sync='db';meta();
+  db.doc('site/pub').onSnapshot(s=>{if(!s.exists)return;let c;try{c=mergeCfg(CFG_DEF,JSON.parse(s.data().cfg))}catch(e){return}if(JSON.stringify(c)===JSON.stringify(A.pub))return;const hadDraft=A.draft&&diffCount(A.draft,A.pub)>0;A.pub=c;lsSet('uca_pub',JSON.stringify(c));if(!A.preview)applyCfg(clone(c));if(A.draft&&!hadDraft)A.draft=clone(c);if(A.open)render()},()=>{A.sync='local';meta()});
+  db.doc('site/hist').get().then(s=>{if(s.exists){try{const h=JSON.parse(s.data().list);if(Array.isArray(h)&&h.length&&(!A.hist.length||h[0].at>=A.hist[0].at)){A.hist=h;lsSet('uca_hist',JSON.stringify(h));if(A.open&&A.tab==='history')render()}}catch(e){}}}).catch(()=>{})}catch(e){A.sync='local'}})();
+ addEventListener('storage',e=>{if(e.key==='uca_pub'&&e.newValue){try{const c=mergeCfg(CFG_DEF,JSON.parse(e.newValue));A.pub=c;if(!A.preview)applyCfg(clone(c));if(A.open)render()}catch(er){}}})}
+
 /* 18+ gate (first visit) */
-(function(){let ok=false;try{ok=localStorage.getItem('uca_18')==='1'}catch(e){}if(ok)return;const g=$('#ag');g.hidden=false;document.body.classList.add('gated');const b=$('#agOk');setTimeout(()=>b.focus(),50);
+(function(){let ok=false;try{ok=localStorage.getItem('uca_18')==='1'}catch(e){}if(ok||CFG.site.ageGate===false)return;const g=$('#ag');g.hidden=false;document.body.classList.add('gated');const b=$('#agOk');setTimeout(()=>b.focus(),50);
  b.onclick=()=>{try{localStorage.setItem('uca_18','1')}catch(e){}g.animate([{opacity:1},{opacity:0}],{duration:280,easing:'ease-out'}).onfinish=()=>{g.hidden=true;document.body.classList.remove('gated')}}})();
-apply(race);cd();
+applyCfg(CFG,1);apply(race);cd();
 /* pages */
 const PAGES={home:'Home',leaderboard:'Leaderboard',weekly:'',goals:'Milestones',winners:'Winners',rules:'Rules & FAQ'};
 const ALIAS={top:'home',perks:'home',top3:'leaderboard',daily:'weekly',miles:'goals',faq:'rules',end:'home'};
@@ -1707,6 +2219,7 @@ function route(h,anim){let p=(h||'').replace('#','')||'home';p=ALIAS[p]||p;if(!(
  ptm=setTimeout(()=>{cur.forEach(e=>e.getAnimations().forEach(x=>x.cancel()));show(p)},210)}
 addEventListener('hashchange',()=>route(location.hash,true));
 route(location.hash,false);
+admInit();
 })();
 </script>
 </body>
