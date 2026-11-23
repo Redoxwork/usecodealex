@@ -1653,7 +1653,9 @@ const D={
   feed:[['RUG!','pa***x fell out of the top 5',''],['So***r','climbed 9 places',''],['Ru***r','holds #1','126.5 SOL'],['Goal 1 hit:','mystery drop unlocked','150 SOL'],['Ca***d','entered the top 3','110.4 SOL']],
   me:['41.2 SOL','3.4 SOL','#7']}};
 /* real mode: no sample data unless the link has ?demo */
-const DEMO_ON=new URLSearchParams(location.search).has('demo');
+const LIVE_HOST=/(^|\.)usecodealex\.com$/.test(location.hostname);
+const DEMO_ON=new URLSearchParams(location.search).has('demo')&&!LIVE_HOST;
+let SV=LIVE_HOST||/^(localhost|127\.0\.0\.1)$/.test(location.hostname),QUIET=false;const SVL={boards:{},totals:{},kick:{}};
 const SAMPLE=JSON.parse(JSON.stringify(D));
 if(!DEMO_ON){['vega','rugs'].forEach(r=>{const d=D[r];d.top=[];d.rows=[];d.sotd=['—',0];d.total=0;d.feed=[];d.me=['—','—','—'];d.win=[]})}
 const KP=DEMO_ON?'uca_demo_':'uca2_';
@@ -1970,7 +1972,7 @@ function renderCi(){const el=$('#kCi');if(!el)return;const r=race,s=LK[r],ci=CI[
  const head='<div class="lbl">Daily SOL giveaway</div>';
  if(!s||s.st<2){el.innerHTML=head+'<h4>Check in on stream</h4><p>Link your Kick first and you get your own check-in code for Alex\'s chat.</p><button type="button" class="btn kick lkOpen"><span class="kk">K</span>Link your Kick</button>';$$('#kCi .lkOpen').forEach(b=>b.onclick=openLk);return}
  if(ci.done){el.innerHTML=head+`<h4>You're checked in today</h4><p>@${s.kick} is in today's draw. Stay active in chat while Alex is live.</p><div class="kfoot"><span class="ok">✓ Entered</span><span>Draw in <span class="mono kUtc">${untilUTC()}</span></span></div>`;return}
- el.innerHTML=head+`<h4>Check in on stream</h4><p>${KICK.live?'Type this in Alex\'s Kick chat now. It counts as today\'s entry.':'Alex is offline. Type this in his Kick chat next time he\'s live.'}</p><div class="kcode"><b>!link ${ci.code}</b><button type="button" id="kCopy">Copy</button></div><div class="kfoot"><span>For @${s.kick} only</span><span>Draw in <span class="mono kUtc">${untilUTC()}</span></span></div>${KICK.live?'<button type="button" class="kdone" id="kSim">Mockup: pretend the bot saw it</button>':''}`;
+ el.innerHTML=head+`<h4>Check in on stream</h4><p>${KICK.live?'Type this in Alex\'s Kick chat now. It counts as today\'s entry.':'Alex is offline. Type this in his Kick chat next time he\'s live.'}</p><div class="kcode"><b>!link ${ci.code}</b><button type="button" id="kCopy">Copy</button></div><div class="kfoot"><span>For @${s.kick} only</span><span>Draw in <span class="mono kUtc">${untilUTC()}</span></span></div>${KICK.live&&!SV?'<button type="button" class="kdone" id="kSim">Mockup: pretend the bot saw it</button>':''}`;
  $('#kCopy').onclick=async()=>{try{await navigator.clipboard.writeText((CFG.site.giveaway.word||'!link')+' '+ci.code)}catch(e){}toast('Copied !link '+ci.code)};
  const sim=$('#kSim');if(sim)sim.onclick=()=>{ci.done=1;renderCi();toast('Checked in for today')}}
 $('#kDemo').onclick=()=>{KICK.live=!KICK.live;renderKick()};
@@ -1996,7 +1998,7 @@ function defCfg(){
  ['vega','rugs'].forEach(r=>{if(!DEMO_ON){hist[r]=[];week[r]=[];return}const h=histFor(r);hist[r]=JSON.parse(JSON.stringify(h)).map(x=>({m:x.m,rows:x.rows.map(w=>({nm:w.nm,w:w.w,p:w.p,paid:!!w.paid,tx:w.paid?(r==='rugs'?'5Hq…sample':'Paid to Vega account'):'',at:''}))}));week[r]=JSON.parse(JSON.stringify(D[r].week));delete D[r].hist;delete D[r].week});
  const race=(r,o)=>Object.assign({pool:D0[r].pool,prizes:D0[r].prizes.slice(),code:D0[r].code,ref:D0[r].ref,headline:DEF_HEAD[r],total:D0[r].total,miles:D0[r].miles.map(m=>m.slice()),board:null,hidden:[],adj:{},star:{auto:true,name:D0[r].sotd[0],val:String(D0[r].sotd[1])}},o);
  return {v:1,
-  races:{vega:race('vega',{period:'Monthly',end:isoLocal(end),promo:DEF_PROMO}),rugs:race('rugs',{period:'Every 2 weeks',end:isoLocal(rugEnd()),promo:''})},
+  races:{vega:race('vega',{period:'Monthly',end:new Date(end).toISOString(),promo:DEF_PROMO}),rugs:race('rugs',{period:'Every 2 weeks',end:new Date(rugEnd()).toISOString(),promo:''})},
   site:{ageGate:true,maintenance:false,maintText:'We are updating the leaderboard. Back soon.',
    socials:{x:'https://x.com/Alexx_',kick:'https://kick.com/alexx',tg:'https://t.me/aleex6ix'},
    kick:{live:false,title:KICK.title},
@@ -2015,7 +2017,7 @@ function loadPub(){const s=lsGet(KP+'pub');if(!s)return JSON.parse(JSON.stringif
 let CFG=loadPub();
 function endFor(r){const t=new Date(CFG.races[r].end).getTime();return isNaN(t)?(r==='rugs'?rugEnd():end):t}
 function solTxt(n){return (+n).toFixed(2)+' SOL'}
-function boardFor(rc,r){const base=(rc.board&&rc.board.length?rc.board:D0[r].top.concat(D0[r].rows)).map(p=>[String(p[0]),(+p[1]||0)+(+((rc.adj||{})[p[0]])||0)]).filter(p=>!(rc.hidden||[]).includes(p[0])).sort((a,b)=>b[1]-a[1]);while(base.length<3)base.push(['—',0]);return base}
+function boardFor(rc,r){const base=(Array.isArray(SVL.boards[r])?SVL.boards[r]:rc.board&&rc.board.length?rc.board:D0[r].top.concat(D0[r].rows)).map(p=>[String(p[0]),(+p[1]||0)+(+((rc.adj||{})[p[0]])||0)]).filter(p=>!(rc.hidden||[]).includes(p[0])).sort((a,b)=>b[1]-a[1]);while(base.length<3)base.push(['—',0]);return base}
 function buildH1(t,r){const ws=String(t).trim().split(/\s+/),half=Math.ceil(ws.length/2);return ws.map((w,i)=>(i===half&&ws.length>1?'<br>':i?' ':'')+`<span class="w${r==='vega'&&i>=half?' acc':''}" style="animation-delay:${(i*.07).toFixed(2)}s">${esc(w)}</span>`).join('')}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function bare(u){return String(u).replace(/^https?:\/\//,'').replace(/\/$/,'')}
@@ -2044,20 +2046,20 @@ function renderStrat(c){const el=$('#strat');if(!el)return;const s=c.site.strate
 function applyCfg(c,first){CFG=c;
  ['vega','rugs'].forEach(r=>{const rc=c.races[r],d=D[r],b=boardFor(rc,r);
   d.pool=+rc.pool||0;d.poolTxt=r==='vega'?'$'+d.pool.toLocaleString('en-US'):solTxt(d.pool);d.prizes=rc.prizes.map(x=>+x||0);d.code=rc.code;d.ref=rc.ref;
-  d.miles=rc.miles.map(m=>[+m[0]||0,m[1]]).sort((a,b)=>a[0]-b[0]);if(!d.miles.length)d.miles=[[1,'Mystery drop']];d.total=+rc.total||0;
+  d.miles=rc.miles.map(m=>[+m[0]||0,m[1]]).sort((a,b)=>a[0]-b[0]);if(!d.miles.length)d.miles=[[1,'Mystery drop']];d.total=SVL.totals[r]!=null?+SVL.totals[r]:+rc.total||0;
   d.top=b.slice(0,3);d.rows=b.slice(3);
   d.sotd=rc.star.auto?D0[r].sotd.slice():[rc.star.name||'—',r==='vega'?(+rc.star.val||0):rc.star.val];
   d.h1=rc.headline.trim()===DEF_HEAD[r]?D0[r].h1:buildH1(rc.headline,r);
   d.hist=(c.payouts[r]||[]).map(x=>({m:x.m,rows:x.rows.map(w=>({nm:w.nm,w:+w.w||0,p:+w.p||0,paid:!!w.paid}))}));if(!d.hist.length)d.hist=[{m:'No races yet',rows:[]}];
   d.week=(c.weekly[r]||[]).slice()});
- KICK.live=!!c.site.kick.live;KICK.title=c.site.kick.title||KICK.title;
+ KICK.live=SVL.kick.ok?!!SVL.kick.live:!!c.site.kick.live;KICK.title=(SVL.kick.ok&&SVL.kick.live&&SVL.kick.title)||c.site.kick.title||KICK.title;if(SVL.kick.ok){KICK.cat=SVL.kick.category||KICK.cat;KICK.thumb=SVL.kick.thumbnail||''}
  const nv=curVals(c),prev=first?TXT_BASE:TXT_CUR,pm={};for(const k in nv)pm[prev[k]]=nv[k];
  TXT_DEF={};for(const k in TXT_BASE)TXT_DEF[TXT_BASE[k]]=nv[k];
  swapText(document.body,pm);TXT_CUR=nv;swapAttrs(document.body,c);
  renderStrat(c);
  const ck=$('#kCi'),kk=$('.kk2');if(kk)kk.style.display='';if(ck)ck.style.display=c.site.giveaway.on?'':'none';
  const mn=$('#mnt');if(mn){mn.hidden=!c.site.maintenance;$('#mntT').textContent=c.site.maintText||'Back soon.'}
- if(!first){apply(race);show(document.body.dataset.page||'home')}}
+ if(!first){apply(race);if(!QUIET)show(document.body.dataset.page||'home')}}
 MO.observe(document.body,{childList:true,subtree:true});
 
 /* ===== admin ===== */
@@ -2107,11 +2109,11 @@ function admEl(){let a=$('#adm');if(a)return a;a=document.createElement('div');a
  a.addEventListener('input',onInput);a.addEventListener('change',onInput);a.addEventListener('click',onClick);return a}
 function saveDraft(){lsSet(KP+'draft',JSON.stringify(A.draft))}
 let dT=0;function onInput(e){const t=e.target;if(t.dataset.adj!=null){const r=A.r,v=t.value===''?0:+t.value;A.draft.races[r].adj=A.draft.races[r].adj||{};if(!v)delete A.draft.races[r].adj[t.dataset.adj];else A.draft.races[r].adj[t.dataset.adj]=v;meta();clearTimeout(dT);dT=setTimeout(saveDraft,250);return}
- const k=t.dataset.k;if(!k)return;let v=t.type==='checkbox'?t.checked:t.value;if(t.dataset.t==='n')v=t.value===''?'':+t.value;setP(A.draft,k,v);
+ const k=t.dataset.k;if(!k)return;let v=t.type==='checkbox'?t.checked:t.value;if(t.dataset.t==='n')v=t.value===''?'':+t.value;if(t.type==='datetime-local'&&v&&!isNaN(new Date(v)))v=new Date(v).toISOString();setP(A.draft,k,v);
  if(t.dataset.re&&e.type==='change'){saveDraft();render();return}if(t.dataset.re)return;meta();clearTimeout(dT);dT=setTimeout(saveDraft,250)}
 function toastA(m){const t=$('#adm .tst');if(!t)return;t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200)}
 
-function fld(lbl,k,o={}){const v=getP(A.draft,k);const tp=o.type||'text';
+function fld(lbl,k,o={}){const tp=o.type||'text';let v=getP(A.draft,k);if(tp==='datetime-local'&&v&&!isNaN(new Date(v)))v=isoLocal(v);
  if(tp==='area')return `<label class="f"><span class="lb">${lbl}</span><textarea data-k="${k}" ${o.ph?`placeholder="${esc(o.ph)}"`:''}>${esc(v)}</textarea>${o.hint?`<div class="hint">${o.hint}</div>`:''}</label>`;
  return `<label class="f"><span class="lb">${lbl}</span><input type="${tp}" data-k="${k}" ${tp==='number'?'data-t="n" inputmode="decimal" step="any"':''} value="${esc(v)}" ${o.ph?`placeholder="${esc(o.ph)}"`:''}>${o.hint?`<div class="hint">${o.hint}</div>`:''}</label>`}
 function tgl(lbl,sub,k,re){return `<label class="glz atg"><span><b>${lbl}</b>${sub?`<small>${sub}</small>`:''}</span><span class="sw2"><input type="checkbox" data-k="${k}" ${re?'data-re="1"':''} ${getP(A.draft,k)?'checked':''}><i></i></span></label>`}
@@ -2149,7 +2151,7 @@ function vRaces(){const r=A.r,k='races.'+r,rc=A.draft.races[r],sym=r==='vega'?'$
  ${rc.miles.map((m,i)=>`<div class="ml"><input type="number" data-t="n" step="any" data-k="${k}.miles.${i}.0" value="${esc(m[0])}" aria-label="Goal ${i+1} amount"><input type="text" data-k="${k}.miles.${i}.1" value="${esc(m[1])}" aria-label="Goal ${i+1} reward"><button type="button" class="ax" data-act="delMile" data-i="${i}" aria-label="Remove goal ${i+1}">×</button></div>`).join('')}
  <button type="button" class="addb" data-act="addMile">+ Add goal</button>`}
 
-function vPlayers(){const r=A.r,k='races.'+r,rc=A.draft.races[r],d=A.draft;const b=(rc.board&&rc.board.length?rc.board:D0[r].top.concat(D0[r].rows));const hid=rc.hidden||[];
+function vPlayers(){const r=A.r,k='races.'+r,rc=A.draft.races[r],d=A.draft;const b=(Array.isArray(SVL.boards[r])?SVL.boards[r]:rc.board&&rc.board.length?rc.board:D0[r].top.concat(D0[r].rows));const hid=rc.hidden||[];
  const links=d.players.links.map((l,i)=>[l,i]).filter(([l])=>l.race===r);
  return `<div class="hd"><h1>Players</h1>${seg()}</div>
  <h2>Account links</h2>
@@ -2159,13 +2161,13 @@ function vPlayers(){const r=A.r,k='races.'+r,rc=A.draft.races[r],d=A.draft;const
  ${tgl('Pick automatically',r==='vega'?'Top weekly wager wins.':'Biggest climber of the week wins.',k+'.star.auto',1)}
  ${rc.star.auto?'':`<div class="ag2">${fld('Player',k+'.star.name')}${fld(r==='vega'?'Weekly wager ($)':'Places climbed',k+'.star.val')}</div>`}
  <h2>Leaderboard</h2>
- <div class="hint" style="margin-bottom:10px">${rc.board&&rc.board.length?'Using your imported list.':'Using sample data until the API is connected.'} Hide a player to remove them from the board, or fix a wager with + or − amounts.</div>
+ <div class="hint" style="margin-bottom:10px">${Array.isArray(SVL.boards[r])?'Live from the '+(r==='vega'?'Vega':'Rugs.fun')+' API.':rc.board&&rc.board.length?'Using your imported list.':DEMO_ON?'Using sample data until the API is connected.':'No wagers yet. They fill in once the API is connected, or import a list below.'} Hide a player to remove them from the board, or fix a wager with + or − amounts.</div>
  <div class="glz atw"><table class="tbl"><thead><tr><th>Player</th><th>Wager</th><th>Fix (±)</th><th></th></tr></thead><tbody>
  ${b.map(p=>{const h=hid.includes(p[0]);return `<tr><td>${esc(p[0])} ${h?'<span class="apill hid">Hidden</span>':''}</td><td>${money(p[1],r)}</td><td style="width:120px"><input type="number" step="any" data-adj="${esc(p[0])}" value="${(rc.adj||{})[p[0]]||''}" placeholder="0" aria-label="Wager fix for ${esc(p[0])}"></td><td style="text-align:right"><button type="button" class="lnk" data-act="hide" data-n="${esc(p[0])}">${h?'Show':'Hide'}</button></td></tr>`}).join('')}
  </tbody></table></div>
  <h2>Import wagers</h2>
  <label class="f"><span class="lb">Paste one player per line: name, wager</span><textarea id="admImp" placeholder="Da***x, 20402&#10;Ni***p, 16920"></textarea></label>
- <div class="arow" style="margin-top:8px"><button type="button" class="gbtn" data-act="import">Use this list</button>${rc.board&&rc.board.length?'<button type="button" class="lnk" data-act="clearBoard">Back to sample data</button>':''}</div>
+ <div class="arow" style="margin-top:8px"><button type="button" class="gbtn" data-act="import">Use this list</button>${rc.board&&rc.board.length?'<button type="button" class="lnk" data-act="clearBoard">'+(DEMO_ON?'Back to sample data':'Clear the list')+'</button>':''}</div>
  <div class="hint">For Rugs.fun if there's no API. Vega fills in automatically once its API is connected.</div>
  <h2>Admins</h2>
  <div class="list">${d.players.mods.map((m,i)=>`<div class="glz li"><div class="agr"><b>@${esc(m.kick)}</b><small>${m.role==='Owner'?'Can change everything':'Can approve links and pick winners'}</small></div>${m.role==='Owner'&&i===0?'<span class="apill paid">Owner</span>':`<select data-k="players.mods.${i}.role" style="width:auto"><option ${m.role==='Mod'?'selected':''}>Mod</option><option ${m.role==='Owner'?'selected':''}>Owner</option></select><button type="button" class="ax" data-act="delMod" data-i="${i}" aria-label="Remove @${esc(m.kick)}">×</button>`}</div>`).join('')}</div>
@@ -2258,10 +2260,10 @@ function onClick(e){const t=e.target.closest('button,[data-tab],[data-race]');if
  if(t.dataset.race&&!act){A.r=t.dataset.race;render();return}
  const r=A.r,rc=d.races[r],i=+t.dataset.i;
  switch(act){
- case 'login':{const u=($('#admU').value||'').trim().replace(/^@/,'');const m=A.pub.players.mods.find(x=>x.kick.toLowerCase()===u.toLowerCase());if(!m){$('#admLe').textContent='@'+(u||'?')+' is not an admin on this site.';return}A.user=m.kick;try{sessionStorage.setItem('uca_admin',m.kick)}catch(er){}render();return}
+ case 'login':{if(SV){location.href='/auth/kick?next='+encodeURIComponent('/#admin');return}const u=($('#admU').value||'').trim().replace(/^@/,'');const m=A.pub.players.mods.find(x=>x.kick.toLowerCase()===u.toLowerCase());if(!m){$('#admLe').textContent='@'+(u||'?')+' is not an admin on this site.';return}A.user=m.kick;try{sessionStorage.setItem('uca_admin',m.kick)}catch(er){}render();return}
  case 'finPrev':closeAdm();showFin(r);return;
  case 'emptyPrev':closeAdm();DEMO.empty=true;if(r!==race)apply(r);location.hash='#leaderboard';renderBoard(r);toast('Empty board preview · reload to go back');return;
- case 'logout':A.user=null;try{sessionStorage.removeItem('uca_admin')}catch(er){}render();return;
+ case 'logout':A.user=null;try{sessionStorage.removeItem('uca_admin')}catch(er){}if(SV){location.href='/auth/logout?next=/';return}render();return;
  case 'close':closeAdm();return;
  case 'checks':showChecks();return;
  case 'mdlX':$('#admMdl').hidden=true;return;
@@ -2288,7 +2290,7 @@ function onClick(e){const t=e.target.closest('button,[data-tab],[data-race]');if
  saveDraft();render()}
 
 function openAdm(){const a=admEl();if(!A.draft){let s=lsGet(KP+'draft');try{A.draft=s?mergeCfg(CFG_DEF,JSON.parse(s)):clone(A.pub)}catch(e){A.draft=clone(A.pub)}}
- try{A.user=A.user||sessionStorage.getItem('uca_admin')}catch(e){}
+ try{if(!SV)A.user=A.user||sessionStorage.getItem('uca_admin')}catch(e){}
  A.open=true;a.hidden=false;document.documentElement.style.overflow='hidden';render();a.scrollTop=0}
 function closeAdm(){const a=$('#adm');if(a)a.hidden=true;A.open=false;document.documentElement.style.overflow='';if(location.hash==='#admin')history.replaceState(null,'',location.pathname+location.search)}
 function admInit(){addEventListener('hashchange',()=>{if(location.hash==='#admin')openAdm()});if(location.hash==='#admin')openAdm();
@@ -2396,6 +2398,102 @@ const _rm=renderMe;renderMe=function(r){_rm(r);const s=LK[r],el=$('#meCard');if(
 const _rk=renderKick;renderKick=function(){_rk();if(DEMO_ON||KICK.live)return;const x=$('#kCard .kgo .s');if(x)x.textContent='Past streams'};
 const _ap2=apply;apply=function(r){_ap2(r);realFix(r)};
 if(!DEMO_ON)apply(race);
+
+/* ===== server mode (usecodealex.com): shared settings, Kick sign-in, live data, player links ===== */
+const SVB={rev:0,cfg:null,none:false};let ME={kick:null,links:[]};A.srvRole=null;
+async function svFetch(url,o={}){const opt={method:o.method||'GET',headers:{'X-UCA':'1'},credentials:'same-origin',cache:'no-store'};
+ if(o.body!==undefined){opt.headers['Content-Type']='application/json';opt.body=JSON.stringify(o.body)}
+ const r=await fetch(url,opt);let j=null;try{j=await r.json()}catch(e){}
+ if(!r.ok){const er=new Error((j&&j.error)||('Request failed ('+r.status+')'));er.status=r.status;er.body=j;throw er}return j}
+function applyQuiet(c){QUIET=true;const y=scrollY;try{applyCfg(c)}finally{QUIET=false}scrollTo(0,y)}
+function ago(t){const s=(Date.now()-new Date(t))/1000;if(isNaN(s))return t;if(s<90)return 'just now';if(s<5400)return Math.round(s/60)+'m ago';if(s<129600)return Math.round(s/3600)+'h ago';return Math.round(s/86400)+'d ago'}
+function maskName(n){n=String(n);return n.length<=3?n[0]+'***':n.slice(0,2)+'***'+n.slice(-1)}
+// three-way merge: base = what the admin started from, mine = their edits, theirs = the server now
+function mergeList(b,m,t,key){const I=a=>{const o={};(a||[]).forEach(x=>{o[key(x)]=x});return o},B=I(b),M=I(m),T=I(t),out=[],seen=new Set();
+ const pick=k=>{if(seen.has(k))return;seen.add(k);const mj=JSON.stringify(M[k]),bj=JSON.stringify(B[k]);const v=mj!==bj?M[k]:T[k];if(v)out.push(v)};
+ (t||[]).forEach(x=>pick(key(x)));(m||[]).forEach(x=>pick(key(x)));return out}
+function merge3(b,m,t){const out=clone(t),clash=[];const J=x=>JSON.stringify(x===undefined?null:x);
+ const unit=(get,set,label)=>{const B=J(get(b)),M=J(get(m)),T=J(get(t));if(M===B)return;if(T!==B&&T!==M)clash.push(label);set(out,clone(get(m)===undefined?null:get(m)))};
+ ['vega','rugs'].forEach(r=>{const nm=r==='vega'?'Vega':'Rugs.fun';new Set([...Object.keys(m.races[r]||{}),...Object.keys(t.races[r]||{})]).forEach(k=>unit(x=>x.races[r]&&x.races[r][k],(o,v)=>{o.races[r][k]=v},nm+' '+k));
+  out.payouts=out.payouts||{};out.payouts[r]=mergeList((b.payouts||{})[r],(m.payouts||{})[r],(t.payouts||{})[r],x=>x.m);
+  unit(x=>(x.weekly||{})[r],(o,v)=>{o.weekly=o.weekly||{};o.weekly[r]=v},nm+' weekly winners')});
+ Object.keys(m.site||{}).forEach(k=>unit(x=>x.site&&x.site[k],(o,v)=>{o.site[k]=v},'site '+k));
+ unit(x=>x.players&&x.players.mods,(o,v)=>{o.players.mods=v},'admins');unit(x=>x.players&&x.players.autoApprove,(o,v)=>{o.players.autoApprove=v},'auto-approve');
+ out.players.links=mergeList((b.players||{}).links,(m.players||{}).links,(t.players||{}).links,x=>String(x.kick).toLowerCase()+'|'+x.race);
+ return {cfg:out,clash:[...new Set(clash)].join(', ')}}
+async function svPull(){let r;try{r=await svFetch('/api/doc/site/pub')}catch(e){return}
+ if(!r.exists){SVB.none=true;return}
+ SVB.none=false;if(r.data.rev===SVB.rev&&SVB.cfg)return;
+ const c=mergeCfg(CFG_DEF,JSON.parse(r.data.cfg));
+ const hadDraft=A.draft&&diffCount(A.draft,A.pub)>0;
+ if(!SVB.cfg&&hadDraft){try{const st=JSON.parse(lsGet(KP+'draftBase')||'null');if(st&&st.cfg){SVB.rev=st.rev;SVB.cfg=mergeCfg(CFG_DEF,st.cfg)}}catch(e){}}
+ A.pub=c;lsSet(KP+'pub',JSON.stringify(c));
+ if(!hadDraft||!SVB.cfg){SVB.rev=r.data.rev;SVB.cfg=clone(c);if(A.draft&&!hadDraft)A.draft=clone(c)}
+ else{const mg=merge3(SVB.cfg,A.draft,c);A.draft=mg.cfg;SVB.rev=r.data.rev;SVB.cfg=clone(c);saveDraft();if(A.open&&A.user&&mg.clash)setTimeout(()=>toastA('The site changed while you were editing. Check '+mg.clash+'.'),300)}
+ if(!A.preview)applyQuiet(clone(c));
+ if(A.open&&A.user)render()}
+let svLiveKey='';
+async function svLive(){try{const j=await svFetch('/api/live');const k=JSON.stringify([j.boards,j.totals,j.kick]);if(k===svLiveKey)return;svLiveKey=k;
+ SVL.boards=j.boards||{};SVL.totals=j.totals||{};SVL.kick=j.kick||{};applyQuiet(CFG)}catch(e){}}
+async function svHist(){if(!A.user)return;try{const r=await svFetch('/api/doc/site/hist');const h=JSON.parse(r.data.list);if(Array.isArray(h)){A.hist=h;if(A.open&&A.tab==='history')render()}}catch(e){}}
+function svLinks(){['vega','rugs'].forEach(r=>{const s=LK[r];if(!ME.kick){s.st=0;return}s.kick=ME.kick;const l=(ME.links||[]).find(x=>x.race===r&&x.st!=='no');
+ if(l){s.st=2;s.name=l.casino;s.ok=l.st==='ok';s.wallet=r==='rugs'?1:0}else{s.st=1;s.ok=false;s.name=''}})}
+async function svMe(){try{ME=await svFetch('/api/me')}catch(e){ME={kick:null,links:[]}}
+ A.srvRole=ME.role||null;A.user=ME.kick&&ME.role?ME.kick:null;svLinks();renderMe(race);if(A.open)render()}
+// publishing goes to the server; a stale save is merged, never overwritten
+const _pub0=publish;publish=async function(){if(!SV)return _pub0();
+ const c=checks(A.draft);if(c.E.length){showChecks();toastA('Fix '+c.E.length+' problem'+(c.E.length>1?'s':'')+' before publishing');return}
+ if(!diffCount(A.draft,A.pub)&&!SVB.none){toastA('Nothing new to publish');return}
+ const pb=$('#adm [data-act=publish]');if(pb)pb.disabled=true;
+ try{const r=await svFetch('/api/publish',{method:'PUT',body:{cfg:A.draft,baseRev:SVB.none?null:SVB.rev}});
+  SVB.rev=r.rev;SVB.none=false;A.pub=clone(A.draft);SVB.cfg=clone(A.pub);lsSet(KP+'pub',JSON.stringify(A.pub));lsSet(KP+'draft',null);lsSet(KP+'draftBase',null);
+  A.sync='db';applyQuiet(clone(A.pub));svHist();render();toastA('Published to the main site')}
+ catch(e){if(e.status===409&&e.body&&e.body.cfg){const th=mergeCfg(CFG_DEF,JSON.parse(e.body.cfg)),mg=merge3(SVB.cfg||A.pub,A.draft,th);
+   A.draft=mg.cfg;A.pub=th;SVB.rev=e.body.rev;SVB.cfg=clone(th);saveDraft();if(!A.preview)applyQuiet(clone(th));render();
+   toastA(mg.clash?'The site changed while you were editing. Check '+mg.clash+', then publish again.':'The site changed while you were editing (new link requests or a race reset). Both are kept. Publish again.')}
+  else{if(e.status===403){A.user=null;render()}toastA(e.message||'Could not publish. Try again.');const p2=$('#adm [data-act=publish]');if(p2)p2.disabled=false}}};
+const _sd0=saveDraft;saveDraft=function(){_sd0();if(SV&&SVB.cfg)lsSet(KP+'draftBase',JSON.stringify({rev:SVB.rev,cfg:SVB.cfg}))};
+const _role0=role;role=function(){return SV&&A.srvRole?A.srvRole:_role0()};
+// admin sign-in screen: real Kick sign-in, no username box
+const _render0=render;render=function(){_render0();if(!SV)return;const a=$('#adm');if(!a)return;
+ if(!A.user){const f=a.querySelector('.lgn label.f');if(f)f.remove();a.querySelectorAll('.lgn p').forEach(p=>{if(/Mockup/.test(p.textContent))p.remove()});
+  const le=$('#admLe');if(le)le.textContent=ME.kick&&!ME.role?'@'+ME.kick+' is not an admin on this site. Sign out of Kick and use the right account.':(ME.signIn===false?'Kick sign-in is not set up on the server yet (see LAUNCH.md).':'');return}
+ const sy=$('#admSync');if(sy&&!sy.dataset.st){sy.dataset.st=1;svFetch('/api/status').then(j=>{const on=x=>x?'on':'not connected';sy.insertAdjacentHTML('beforeend',`<div style="margin-top:6px;font-size:11px;opacity:.8;line-height:1.5">Kick: ${on(j.kick)} · Vega API: ${on(j.vega)} · Rugs.fun API: ${on(j.rugs)}${Object.keys(j.errors||{}).length?'<br>Last error: '+esc(Object.entries(j.errors).map(([k,v])=>k+': '+v).join(' / ')):''}</div>`)}).catch(()=>{})}
+ a.querySelectorAll('.li .agr small').forEach(sm=>{sm.textContent=sm.textContent.replace(/(\d{4}-\d\d-\d\dT[\d:.]+Z)/,m=>ago(m))})};
+// players: real Kick sign-in, Vega username request, Rugs.fun wallet signature
+const _lk0=renderLk;renderLk=function(){if(!SV)return _lk0();const r=race,s=LK[r],v=r==='vega',B=$('#lkB');
+ $('#lkL').textContent=v?'Link Vega account':'Link Rugs.fun wallet';
+ $('#lkSt').innerHTML=['Kick',v?'Vega account':'Wallet',v?'Approval':'Verified'].map((t,i)=>`<li class="${i<=s.st?'on':''}">${t}</li>`).join('');
+ const note=$('#lk .lk-n');if(note)note.textContent=v?'Alex checks each Vega link once against his affiliate list.':'Signing is free. It is not a transaction.';
+ if(!ME.kick){B.innerHTML=`<p class="lk-p">Sign in with Kick first. That is how we know who you are on stream and for the daily SOL giveaway.</p><button type="button" class="btn kick lk-b" id="lkGo"><span class="kk">K</span>Sign in with Kick</button>`;
+  $('#lkGo').onclick=()=>{location.href='/auth/kick?next='+encodeURIComponent('/?lk='+r+(location.hash||''))};return}
+ if(s.st<2&&v){B.innerHTML=`<p class="lk-p">Signed in as <b>@${esc(ME.kick)}</b>. Type the Vega username you signed up with under code <b>${esc(D.vega.code)}</b>.</p><div class="sbox"><input id="lkIn" placeholder="Vega username" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="32"></div><button type="button" class="btn pri lk-b" id="lkGo" style="margin-top:12px">Send for approval</button><p class="lk-p" id="lkErr" style="margin-top:8px"></p>`;
+  $('#lkGo').onclick=async e=>{const b=e.currentTarget,val=$('#lkIn').value.trim();if(!/^[\w.\-]{3,32}$/.test(val)){$('#lkErr').textContent='Enter your Vega username (3 to 32 letters, numbers, dots, dashes or underscores).';return}
+   b.disabled=true;b.innerHTML='<span class="spin"></span>Sending';try{const j=await svFetch('/api/link',{method:'POST',body:{race:'vega',casino:val}});ME.links=j.links;svLinks();renderLk();renderMe(r)}catch(er){b.disabled=false;b.textContent='Send for approval';$('#lkErr').textContent=er.message}};return}
+ if(s.st<2){const pv=(window.phantom&&window.phantom.solana)||window.solana||window.solflare;
+  if(!pv){B.innerHTML=`<p class="lk-p">No Solana wallet found in this browser. On a phone, open this page inside your Phantom app. On a computer, add the Phantom or Solflare extension and reload.</p><a class="btn pri lk-b" href="https://phantom.app/ul/browse/${encodeURIComponent(location.href)}?ref=${encodeURIComponent(location.origin)}">Open in Phantom</a>`;return}
+  B.innerHTML=`<p class="lk-p">Signed in as <b>@${esc(ME.kick)}</b>. Connect the wallet you play Rugs.fun with, then sign a free message. We never ask for your keys or seed phrase.</p><button type="button" class="btn pri lk-b" id="lkGo">Connect and sign</button><p class="lk-p" id="lkErr" style="margin-top:8px"></p>`;
+  $('#lkGo').onclick=async e=>{const b=e.currentTarget;b.disabled=true;b.innerHTML='<span class="spin"></span>Check your wallet';
+   try{const c=await pv.connect();const pk=String((c&&c.publicKey)||pv.publicKey);const {message}=await svFetch('/api/link/nonce',{method:'POST',body:{}});
+    const sg=await pv.signMessage(new TextEncoder().encode(message),'utf8');const sig=sg&&sg.signature?sg.signature:sg;let bin='';new Uint8Array(sig).forEach(x=>{bin+=String.fromCharCode(x)});
+    const j=await svFetch('/api/link',{method:'POST',body:{race:'rugs',wallet:pk,sig:btoa(bin)}});ME.links=j.links;svLinks();renderLk();renderMe(r)}
+   catch(er){b.disabled=false;b.textContent='Connect and sign';$('#lkErr').textContent=(er&&er.message)||'Cancelled in the wallet.'}};return}
+ const sh=x=>String(x).length>12?String(x).slice(0,4)+'…'+String(x).slice(-4):String(x);
+ B.innerHTML=v?`<div class="lk-card"><span class="ra">${s.ok?'✓':'…'}</span><div><b>${esc(s.name)}</b><small>Linked to @${esc(ME.kick)}</small></div></div><span class="stamp ${s.ok?'':'pend'}">${s.ok?'APPROVED':'PENDING'}</span><p class="lk-p" style="margin-top:12px">${s.ok?'You are linked. Your rank shows on the board as you play.':'Alex approves each link once so nobody can claim your name. Your rank shows as soon as it is approved.'}</p><button type="button" class="btn pri lk-b" id="lkGo">Done</button><button type="button" class="lk-l" id="lkRe">Wrong username? Change it</button>`
+  :`<div class="lk-card"><span class="ra">✓</span><div><b class="mono">${esc(sh(s.name))}</b><small>Linked to @${esc(ME.kick)}</small></div></div><span class="lk-ok">✓ Wallet verified</span><p class="lk-p">Your race prizes are sent in SOL to this wallet.</p><button type="button" class="btn pri lk-b" id="lkGo">Done</button>`;
+ $('#lkGo').onclick=closeLk;const re=$('#lkRe');if(re)re.onclick=()=>{s.st=1;renderLk()}};
+// linked players see their real rank (Vega names are masked the same way the server masks them)
+const _rm1=renderMe;renderMe=function(r){_rm1(r);if(!SV)return;const s=LK[r],el=$('#meCard');if(!el||!s||s.st<2||(r==='vega'&&!s.ok))return;
+ if(r==='vega'){const all=D[r].top.concat(D[r].rows),i=all.findIndex(p=>p[0]===maskName(s.name));if(i<0)return;
+  el.innerHTML=`<div style="display:flex;align-items:center;gap:10px"><div class="av">${esc(ME.kick[0].toUpperCase())}</div><div style="flex:1;min-width:0"><b style="font-size:14px">@${esc(ME.kick)}</b><div style="font-size:12px;color:var(--mute)">#${i+1} in the Vega race</div></div><b class="mono" style="font-size:13px">${fmt(all[i][1],r)}</b></div><div style="font-size:12px;color:var(--mute)">${i?fmt(all[i-1][1]-all[i][1],r)+' to pass #'+i:'You are leading the race'}</div>`}};
+if(SV){(async()=>{
+ try{sessionStorage.removeItem('uca_admin')}catch(e){}
+ A.sync='db';await svMe();await svPull();await svLive();svHist();
+ setInterval(svPull,20000);setInterval(svLive,60000);setInterval(()=>{if(A.open&&A.user)svMe()},60000);
+ const q=new URLSearchParams(location.search),lk=q.get('lk'),si=q.get('signin');
+ if(lk||si){q.delete('lk');q.delete('signin');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')+location.hash)}
+ if(si==='failed')toast('Kick sign-in did not finish. Try again.');if(si==='off')toast('Kick sign-in is not set up yet.');
+ if(lk==='vega'||lk==='rugs'){if(lk!==race)apply(lk);openLk()}})()}
 route(location.hash,false);
 admInit();
 })();
