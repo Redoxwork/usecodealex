@@ -216,6 +216,12 @@ async function pollCasino(race) {
     live.boards[race] = rows.slice(0, 200).map((r) => [R.mask(r[0]), Math.round(r[1] * 100) / 100]);
     live.totals[race] = Math.round(total * 100) / 100;
     delete live.errors[race];
+    if (wk.start && wk.noData && wk.noData[race]) {
+      wk.base[race] = race === 'vega' ? amounts(live.boards[race]) : ranks(live.boards[race]);
+      wk.noData[race] = false;
+      db.set('week', wk);
+    }
+    updateStars();
     saveLive();
     return live.boards[race];
   } catch (e) {
@@ -223,6 +229,83 @@ async function pollCasino(race) {
     saveLive();
     log('[' + race + ']', e.message);
     return null;
+  }
+}
+
+// ---------- Star / Survivor of the Week ----------
+// Weeks run Monday 00:00 to Sunday 23:59 UTC. We snapshot the race board when a week starts,
+// then: Vega star = most wagered since the snapshot; Rugs.fun survivor = most places climbed.
+function weekStart(t = Date.now()) {
+  const d = new Date(t);
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - ((d.getUTCDay() + 6) % 7));
+}
+function isoWeek(t) {
+  const d = new Date(t + 3 * R.DAY); // Thursday of that week decides the ISO week
+  const y = Date.UTC(d.getUTCFullYear(), 0, 1);
+  return Math.ceil(((d - y) / R.DAY + 1) / 7);
+}
+let wk = db.get('week', null) || { start: 0, base: { vega: {}, rugs: {} }, carry: { vega: {}, rugs: {} } };
+const amounts = (rows) => Object.fromEntries((rows || []).map((r) => [r[0], +r[1] || 0]));
+const ranks = (rows) => Object.fromEntries((rows || []).map((r, i) => [r[0], i + 1]));
+function weeklyLeader(race) {
+  const rows = live.boards[race];
+  if (!Array.isArray(rows) || !rows.length) return null;
+  if (race === 'vega') {
+    const base = wk.base.vega, carry = wk.carry.vega;
+    const tot = {};
+    for (const [n, w] of rows) tot[n] = (carry[n] || 0) + (w - (base[n] || 0));
+    for (const n in carry) if (!(n in tot)) tot[n] = carry[n];
+    const best = Object.entries(tot).sort((a, b) => b[1] - a[1])[0];
+    return best && best[1] > 0 ? { nm: best[0], v: Math.round(best[1] * 100) / 100 } : null;
+  }
+  const base = wk.base.rugs, fresh = Object.keys(base).length + 1;
+  let best = null;
+  rows.forEach(([n], i) => {
+    const climb = (base[n] || fresh) - (i + 1);
+    if (climb > 0 && (!best || climb > best.c)) best = { nm: n, c: climb };
+  });
+  return best ? { nm: best.nm, v: '+' + best.c } : null;
+}
+function updateStars() {
+  live.star = { vega: weeklyLeader('vega'), rugs: weeklyLeader('rugs') };
+}
+let weekBusy = false;
+async function weekClock() {
+  const s = weekStart();
+  if (wk.start === s || weekBusy) return;
+  weekBusy = true;
+  try {
+    if (wk.start) {
+      // Close last week with the freshest numbers.
+      await pollCasino('vega');
+      await pollCasino('rugs');
+      updateStars();
+      const p = pub();
+      if (p) {
+        const cfg = JSON.parse(JSON.stringify(p.cfg));
+        let changed = false;
+        for (const race of ['vega', 'rugs']) {
+          const st = live.star[race];
+          if (!st || (cfg.races[race].star && cfg.races[race].star.auto === false)) continue;
+          cfg.weekly = cfg.weekly || {};
+          cfg.weekly[race] = cfg.weekly[race] || [];
+          cfg.weekly[race].unshift({ wk: 'Week ' + isoWeek(wk.start), nm: st.nm, v: race === 'vega' ? '$' + Math.round(st.v).toLocaleString('en-US') : st.v + ' places' });
+          cfg.weekly[race] = cfg.weekly[race].slice(0, 52);
+          changed = true;
+          log(`[week] ${race} week ${isoWeek(wk.start)} winner ${st.nm}`);
+        }
+        if (changed) savePub(cfg, 'auto');
+      }
+    }
+    // If a casino had no data yet, take its starting snapshot from the first data we get.
+    wk = { start: s, base: { vega: amounts(live.boards.vega), rugs: ranks(live.boards.rugs) }, carry: { vega: {}, rugs: {} }, noData: { vega: !Array.isArray(live.boards.vega), rugs: !Array.isArray(live.boards.rugs) } };
+    db.set('week', wk);
+    updateStars();
+    saveLive();
+  } catch (e) {
+    log('[week]', e.message);
+  } finally {
+    weekBusy = false;
   }
 }
 
@@ -248,6 +331,14 @@ async function raceClock() {
       cfg.payouts = cfg.payouts || {};
       cfg.payouts[race] = cfg.payouts[race] || [];
       if (winners.length) cfg.payouts[race].unshift({ m: R.label(race, end, rc.period), rows: winners });
+      // Keep this week's progress across the race reset.
+      if (race === 'vega') {
+        for (const [n, w] of rows.map((x) => [String(x[0]), +x[1] || 0])) wk.carry.vega[n] = (wk.carry.vega[n] || 0) + (w - (wk.base.vega[n] || 0));
+        wk.base.vega = {};
+      } else {
+        wk.base.rugs = {};
+      }
+      db.set('week', wk);
       // Next race: same length, starting where this one ended.
       while (end <= Date.now()) end = R.nextEnd(end, rc.period);
       rc.end = new Date(end).toISOString();
@@ -297,7 +388,7 @@ const seenEvents = new Map(); // message id -> time, so a retried delivery is on
 function giveCfg() {
   const p = pub();
   const g = (p && p.cfg.site && p.cfg.site.giveaway) || {};
-  return { on: g.on !== false, word: String(g.word || '!link').trim() || '!link' };
+  return { on: g.on === true, word: String(g.word || '!link').trim() || '!link' };
 }
 function eligible(kickName) {
   return myLinks(kickName).some((l) => l.st === 'ok');
@@ -418,7 +509,7 @@ async function route(req, res) {
   if (p === '/api/live') {
     const k = { ...live.kick };
     delete k.id;
-    return json(res, 200, { boards: live.boards, totals: live.totals, kick: k, give: give.publicInfo(), at: live.at });
+    return json(res, 200, { boards: live.boards, totals: live.totals, kick: k, star: live.star || {}, give: give.publicInfo(), at: live.at });
   }
   if (p === '/api/status') {
     if (!(sess && roleOrOwner(sess.kick))) return json(res, 403, { error: 'Admins only' });
@@ -533,9 +624,10 @@ const timers = [
   setInterval(pollKick, 60_000),
   setInterval(() => { pollCasino('vega'); pollCasino('rugs'); }, POLL_MS),
   setInterval(raceClock, 30_000),
+  setInterval(weekClock, 60_000),
   setInterval(() => { try { const d = give.autoDraw(); if (d.length) log('[give] auto-drew', d.join(', ')); } catch (e) { log('[give]', e.message); } }, 60_000),
 ];
-setTimeout(() => { pollKick(); pollCasino('vega'); pollCasino('rugs'); raceClock(); }, 1000);
+setTimeout(async () => { pollKick(); await Promise.all([pollCasino('vega'), pollCasino('rugs')]); raceClock(); weekClock(); }, 1000);
 
 function stop() {
   timers.forEach(clearInterval);

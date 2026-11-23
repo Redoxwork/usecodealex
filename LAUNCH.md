@@ -155,7 +155,18 @@ https://usecodealex.com/api/health
 The server signs up for Alex's chat and live events by itself. In the admin's left menu,
 **Kick: on** means sign-in and live status work.
 
-### Daily SOL giveaway
+### Star / Survivor of the Week
+
+Picked automatically once the casino APIs are connected. Weeks run Monday 00:00 to Sunday 23:59 UTC.
+- **Star of the Week (Vega):** most wagered that week.
+- **Survivor of the Week (Rugs.fun):** most places climbed that week.
+
+Winners are saved in **Admin → Payouts → weekly winners** every Monday.
+To pick by hand instead, turn off **Pick automatically** in **Admin → Players**.
+
+### Daily SOL giveaway (off by default)
+
+Turn it on in **Admin → Site → Daily SOL giveaway**. While it's off, it's hidden everywhere on the site and chat check-ins are ignored.
 
 - Players link their Kick, then get their Vega or Rugs.fun account approved.
 - Each player gets a personal code that changes every day.
