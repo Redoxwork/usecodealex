@@ -101,11 +101,63 @@ class Kick {
     if (!c) throw new Error('Kick channel "' + slug + '" not found');
     const s = c.stream || {};
     return {
+      id: c.broadcaster_user_id,
       live: !!s.is_live,
       title: c.stream_title || '',
       category: (c.category && c.category.name) || '',
       thumbnail: s.is_live ? s.thumbnail || '' : '',
     };
+  }
+
+  // ----- webhooks -----
+  // Kick signs "<message id>.<timestamp>.<raw body>" with RSA-SHA256; the public key is fetched, never hardcoded.
+  async publicKey(force) {
+    if (!force && this.pk && Date.now() - this.pk.at < 6 * 3600_000) return this.pk.key;
+    const r = await fetch(`${API}/public-key`);
+    if (!r.ok) throw new Error('Kick public key fetch failed (' + r.status + ')');
+    const j = await r.json();
+    const pem = j && j.data && j.data.public_key;
+    if (!pem) throw new Error('Kick public key missing');
+    this.pk = { key: crypto.createPublicKey(pem), at: Date.now() };
+    return this.pk.key;
+  }
+
+  async verifyWebhook(headers, raw) {
+    const id = headers['kick-event-message-id'];
+    const ts = headers['kick-event-message-timestamp'];
+    const sig = headers['kick-event-signature'];
+    if (!id || !ts || !sig) return false;
+    const data = Buffer.concat([Buffer.from(`${id}.${ts}.`), raw]);
+    const check = (key) => crypto.verify('sha256', data, key, Buffer.from(sig, 'base64'));
+    try {
+      if (check(await this.publicKey())) return true;
+      return check(await this.publicKey(true)); // key may have just been rotated
+    } catch (e) {
+      this.log.error('[kick] webhook verify', e.message);
+      return false;
+    }
+  }
+
+  // Make sure Kick sends us chat messages and live/offline changes for this channel.
+  async ensureSubscriptions(broadcasterId) {
+    const want = ['chat.message.sent', 'livestream.status.updated'];
+    const token = await this._appToken();
+    const h = { Authorization: `Bearer ${token}` };
+    const r = await fetch(`${API}/events/subscriptions?broadcaster_user_id=${broadcasterId}`, { headers: h });
+    if (!r.ok) throw new Error('Kick subscriptions list failed (' + r.status + ')');
+    const have = new Set(((await r.json()).data || []).filter((x) => x.method === 'webhook').map((x) => x.event));
+    const missing = want.filter((e) => !have.has(e));
+    if (!missing.length) return [];
+    const p = await fetch(`${API}/events/subscriptions`, {
+      method: 'POST',
+      headers: { ...h, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ broadcaster_user_id: broadcasterId, events: missing.map((name) => ({ name, version: 1 })), method: 'webhook' }),
+    });
+    const t = await p.text();
+    if (!p.ok) throw new Error('Kick subscribe failed (' + p.status + '): ' + t.slice(0, 200));
+    const bad = (JSON.parse(t).data || []).filter((x) => x.error);
+    if (bad.length) throw new Error('Kick subscribe: ' + bad.map((x) => x.name + ' ' + x.error).join(', '));
+    return missing;
   }
 
   _sweep() {

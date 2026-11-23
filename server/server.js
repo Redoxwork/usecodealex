@@ -18,6 +18,7 @@ const { Kick } = require('./lib/kick');
 const { make } = require('./lib/casinos/generic');
 const R = require('./lib/races');
 const { verifyWallet } = require('./lib/wallet');
+const { Giveaway } = require('./lib/giveaway');
 
 const PORT = Number(process.env.PORT || 8080);
 const HOST = process.env.HOST || '127.0.0.1';
@@ -44,6 +45,7 @@ const kick = new Kick({
   redirectUri: SITE_URL + '/auth/kick/callback',
 });
 const CASINOS = { vega: make('VEGA'), rugs: make('RUGS') };
+const give = new Giveaway(db, SECRET);
 
 // ---------- helpers ----------
 function loadEnv(file) {
@@ -122,6 +124,19 @@ function readBody(req, limit = 1_000_000) {
     req.on('error', bad);
   });
 }
+function readRaw(req, limit = 256_000) {
+  return new Promise((ok, bad) => {
+    let size = 0;
+    const parts = [];
+    req.on('data', (c) => {
+      size += c.length;
+      if (size > limit) { bad(Object.assign(new Error('Too large'), { code: 413 })); req.destroy(); return; }
+      parts.push(c);
+    });
+    req.on('end', () => ok(Buffer.concat(parts)));
+    req.on('error', bad);
+  });
+}
 // Only send people back to pages on this site after sign-in.
 function safeNext(n) {
   n = String(n || '/');
@@ -166,6 +181,7 @@ function savePub(cfg, by) {
 const live = db.get('live', { boards: { vega: null, rugs: null }, totals: { vega: null, rugs: null }, kick: { ok: false, live: false }, at: 0, errors: {} });
 function saveLive() { live.at = Date.now(); db.set('live', live); }
 
+let subsAt = 0;
 async function pollKick() {
   if (!kick.configured) return;
   const p = pub();
@@ -175,6 +191,12 @@ async function pollKick() {
     const c = await kick.channel(slug);
     live.kick = { ok: true, ...c };
     delete live.errors.kick;
+    if (c.id && process.env.KICK_WEBHOOKS !== 'off' && (!subsAt || Date.now() - subsAt > 30 * 60_000)) {
+      subsAt = Date.now();
+      kick.ensureSubscriptions(c.id)
+        .then((added) => { delete live.errors.webhook; if (added.length) log('[kick] subscribed to', added.join(', ')); })
+        .catch((e) => { live.errors.webhook = e.message; log('[kick]', e.message); });
+    }
   } catch (e) {
     live.errors.kick = e.message;
     log('[kick]', e.message);
@@ -270,6 +292,58 @@ function myLinks(kickName) {
     .map((l) => ({ race: l.race, casino: l.casino, st: l.st }));
 }
 
+// ---------- Kick webhooks (chat check-ins, live status) ----------
+const seenEvents = new Map(); // message id -> time, so a retried delivery is only counted once
+function giveCfg() {
+  const p = pub();
+  const g = (p && p.cfg.site && p.cfg.site.giveaway) || {};
+  return { on: g.on !== false, word: String(g.word || '!link').trim() || '!link' };
+}
+function eligible(kickName) {
+  return myLinks(kickName).some((l) => l.st === 'ok');
+}
+function onChat(ev) {
+  const g = giveCfg();
+  if (!g.on || !ev || !ev.sender || ev.sender.is_anonymous) return;
+  if (live.kick.id && ev.broadcaster && ev.broadcaster.user_id !== live.kick.id) return;
+  const esc = g.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const m = String(ev.content || '').match(new RegExp('^\\s*' + esc + '\\s+(\\d{4})\\b', 'i'));
+  if (!m) return;
+  const who = String(ev.sender.username || '');
+  if (!who) return;
+  if (give.isIn(who)) return give.note(who, 'already in today');
+  if (!live.kick.live) return give.note(who, 'Alex was not live');
+  if (!eligible(who)) return give.note(who, 'no approved Vega or Rugs.fun account');
+  if (m[1] !== give.code(who)) return give.note(who, 'wrong code ' + m[1]);
+  give.enter(who);
+  give.note(who, 'checked in');
+  log('[give] @' + who + ' checked in');
+}
+async function webhook(req, res) {
+  const raw = await readRaw(req);
+  const h = req.headers;
+  if (!kick.configured || !(await kick.verifyWebhook(h, raw))) return json(res, 401, { error: 'Bad signature' });
+  const id = h['kick-event-message-id'];
+  const ts = Date.parse(h['kick-event-message-timestamp']);
+  if (isNaN(ts) || Math.abs(Date.now() - ts) > 10 * 60_000) return json(res, 400, { error: 'Stale event' });
+  if (seenEvents.has(id)) return json(res, 200, { ok: true, dup: true });
+  seenEvents.set(id, Date.now());
+  if (seenEvents.size > 5000) for (const [k, t] of seenEvents) if (Date.now() - t > 3600_000) seenEvents.delete(k);
+  let ev;
+  try { ev = JSON.parse(raw.toString('utf8')); } catch (_) { return json(res, 400, { error: 'Bad JSON' }); }
+  const type = h['kick-event-type'];
+  if (type === 'livestream.status.updated') {
+    if (!live.kick.id || !ev.broadcaster || ev.broadcaster.user_id === live.kick.id) {
+      live.kick = { ...live.kick, ok: true, live: !!ev.is_live, title: ev.title || live.kick.title, thumbnail: ev.is_live ? live.kick.thumbnail : '' };
+      saveLive();
+      log('[kick] stream ' + (ev.is_live ? 'started' : 'ended'));
+    }
+  } else if (type === 'chat.message.sent') {
+    onChat(ev);
+  }
+  return json(res, 200, { ok: true });
+}
+
 // ---------- static files ----------
 const FILES = {
   '/': ['index.html', 'text/html; charset=utf-8', 'no-cache'],
@@ -300,6 +374,8 @@ async function route(req, res) {
   const p = u.pathname;
   const m = req.method;
   const sess = getSession(req);
+
+  if (p === '/webhooks/kick' && m === 'POST') return webhook(req, res);
 
   // Mutating API calls must carry this header (blocks cross-site form posts).
   if (m !== 'GET' && m !== 'HEAD' && req.headers['x-uca'] !== '1') return json(res, 403, { error: 'Missing header' });
@@ -340,16 +416,36 @@ async function route(req, res) {
   }
 
   if (p === '/api/live') {
-    return json(res, 200, { boards: live.boards, totals: live.totals, kick: live.kick, at: live.at });
+    const k = { ...live.kick };
+    delete k.id;
+    return json(res, 200, { boards: live.boards, totals: live.totals, kick: k, give: give.publicInfo(), at: live.at });
   }
   if (p === '/api/status') {
     if (!(sess && roleOrOwner(sess.kick))) return json(res, 403, { error: 'Admins only' });
-    return json(res, 200, { errors: live.errors, at: live.at, kick: kick.configured, vega: CASINOS.vega.configured, rugs: CASINOS.rugs.configured });
+    return json(res, 200, { errors: live.errors, at: live.at, kick: kick.configured, webhooks: kick.configured && process.env.KICK_WEBHOOKS !== 'off' && !live.errors.webhook && !!subsAt, vega: CASINOS.vega.configured, rugs: CASINOS.rugs.configured });
+  }
+
+  if (p.startsWith('/api/giveaway')) {
+    if (!(sess && roleOrOwner(sess.kick))) return json(res, 403, { error: 'Admins only' });
+    if (p === '/api/giveaway' && m === 'GET') return json(res, 200, give.admin());
+    const b = await readBody(req, 20_000);
+    const day = /^\d{4}-\d\d-\d\d$/.test(b.day || '') ? b.day : give.today();
+    if (p === '/api/giveaway/draw' && m === 'POST') {
+      const w = give.draw(day, sess.kick, !!b.reroll);
+      log('[give] @' + sess.kick + ' drew @' + w.kick + ' for ' + day);
+      return json(res, 200, { ok: true, winner: w, ...give.admin() });
+    }
+    if (p === '/api/giveaway/paid' && m === 'POST') {
+      give.setPaid(day, b.paid, b.tx);
+      return json(res, 200, { ok: true, ...give.admin() });
+    }
+    return json(res, 404, { error: 'Not found' });
   }
 
   if (p === '/api/me') {
     if (!sess) return json(res, 200, { kick: null, signIn: kick.configured || DEV_LOGIN });
-    return json(res, 200, { kick: sess.kick, role: roleOrOwner(sess.kick), links: myLinks(sess.kick) });
+    const g = giveCfg();
+    return json(res, 200, { kick: sess.kick, role: roleOrOwner(sess.kick), links: myLinks(sess.kick), checkin: { on: g.on, word: g.word, code: give.code(sess.kick), done: give.isIn(sess.kick), eligible: eligible(sess.kick), day: give.today() } });
   }
 
   if (p === '/api/link' && m === 'POST') {
@@ -437,6 +533,7 @@ const timers = [
   setInterval(pollKick, 60_000),
   setInterval(() => { pollCasino('vega'); pollCasino('rugs'); }, POLL_MS),
   setInterval(raceClock, 30_000),
+  setInterval(() => { try { const d = give.autoDraw(); if (d.length) log('[give] auto-drew', d.join(', ')); } catch (e) { log('[give]', e.message); } }, 60_000),
 ];
 setTimeout(() => { pollKick(); pollCasino('vega'); pollCasino('rugs'); raceClock(); }, 1000);
 

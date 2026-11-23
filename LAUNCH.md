@@ -44,7 +44,9 @@ Plan on about an hour the first time. Every command below is copy and paste.
 1. Signed in as **alexx** on kick.com: **Settings → Developer** → create an app.
 2. **Redirect URL:** `https://usecodealex.com/auth/kick/callback` (exactly this).
 3. Turn on the **user:read** scope if the form lists scopes.
-4. Copy the **Client ID** and **Client Secret**. Never post the secret anywhere public.
+4. **Enable Webhooks:** switch it on and set the URL to `https://usecodealex.com/webhooks/kick`.
+   This is how Kick sends Alex's chat messages (daily check-ins) and live/offline changes to the site.
+5. Copy the **Client ID** and **Client Secret**. Never post the secret anywhere public.
 
 ## 5. Set up the server
 
@@ -149,6 +151,19 @@ https://usecodealex.com/api/health
 1. Open **https://usecodealex.com/#admin** → **Sign in with Kick** as **alexx**.
 2. Check **Races** (prize pools, splits, end dates) and **Site**.
 3. Press **Publish** once. That saves the settings on the server and starts the race clock.
+
+The server signs up for Alex's chat and live events by itself. In the admin's left menu,
+**Kick: on** means sign-in and live status work.
+
+### Daily SOL giveaway
+
+- Players link their Kick, then get their Vega or Rugs.fun account approved.
+- Each player gets a personal code that changes every day.
+- They type `!link CODE` in Alex's Kick chat while he's live. The site marks them checked in within seconds.
+- **Admin → Giveaway** shows who checked in today and has a big **Draw winner** button for doing it on stream.
+- Days that aren't drawn by 00:00 UTC are drawn automatically.
+- Mark the winner paid with the transaction link, like race payouts.
+- If someone says their check-in didn't count, **Recent check-in attempts** shows why (wrong code, not live, account not approved).
 
 From then on, races close by themselves at their end time:
 - The final top places are saved as a payout list in **Payouts**, marked unpaid.

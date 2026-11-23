@@ -1381,6 +1381,17 @@ body.gated{overflow:hidden}
 .emp .em-code{font-family:var(--fm);font-weight:700;color:var(--p)}
 .emp.sm{padding:30px 18px}.emp.sm h3{font-size:21px}
 #win>.emp{display:block!important;flex:1 1 100%;width:100%}
+.adm .gstage{text-align:center;padding:22px 10px 18px;margin:12px 0;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid var(--ln)}
+.adm .gstage small{display:block;font-size:12px;color:var(--mut);letter-spacing:.08em;text-transform:uppercase}
+.adm .gstage b{display:block;margin-top:8px;font-size:clamp(28px,6vw,44px);font-weight:700;letter-spacing:-.02em;word-break:break-all}
+.adm .gstage.won{background:radial-gradient(ellipse at 50% 0,rgba(127,214,168,.18),rgba(255,255,255,.03) 70%);border-color:rgba(127,214,168,.35)}
+.adm .gstage.won .apill{margin-top:10px}
+.adm .gstage.pop b{animation:gPop .6s cubic-bezier(.2,1.4,.3,1)}
+@keyframes gPop{0%{transform:scale(.7);opacity:.3}100%{transform:none;opacity:1}}
+.adm .gbig{font-size:17px;padding:13px 30px}
+.adm .gbig[disabled]{opacity:.45;cursor:not-allowed}
+.adm input[id^=gTx-]{background:rgba(255,255,255,.05);border:1px solid var(--ln);border-radius:11px;padding:9px 12px;color:inherit;font:inherit;font-size:14px}
+
 
 .endS{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;justify-content:space-between;margin-top:18px;padding:16px 18px;border-radius:18px;border:1px solid var(--line2);background:var(--panel)}
 .endS b{font-family:var(--fd);font-size:18px;color:var(--ink)}
@@ -2212,11 +2223,11 @@ function miniPv(){const d=A.draft,r=A.r,rc=d.races[r],b=boardFor(rc,r);
  <div class="hint" style="margin-top:12px">Code <b>${esc(rc.code)}</b> · ${esc(bare(rc.ref))}</div>`}
 
 function role(){const m=A.pub.players.mods.find(x=>x.kick.toLowerCase()===String(A.user).toLowerCase());return m?m.role:null}
-function tabsFor(){return role()==='Mod'?TABS.filter(t=>['home','players','payouts'].includes(t[0])):TABS}
+function tabsFor(){return role()==='Mod'?TABS.filter(t=>['home','players','payouts','give'].includes(t[0])):TABS}
 function render(){const a=admEl();a.dataset.r=A.r;
  if(!A.user){a.innerHTML=`<div class="bgl"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div><div class="awrap"><div class="lgn"><div class="glz"><img src="${$('.o-ava')?$('.o-ava').src:''}" alt=""><h1>UseCodeAlex admin</h1><p>Sign in with the Kick account that owns this site, or one Alex has added as a mod.</p><label class="f" style="text-align:left"><span class="lb">Kick username (mockup)</span><input type="text" id="admU" value="alexx" autocomplete="username"></label><div style="height:12px"></div><button type="button" class="kbtn" data-act="login"><b>K</b>Sign in with Kick</button><div class="lerr" id="admLe"></div><p style="margin:14px 0 0;font-size:12px">Mockup: the live site uses Kick's real sign-in.</p><button type="button" class="lnk" data-act="close" style="margin-top:6px">Back to site</button></div></div></div><div class="tst"></div>`;return}
  const sc=a.querySelector('main')?a.scrollTop:0;const tabs=tabsFor();if(!tabs.some(t=>t[0]===A.tab))A.tab='home';
- const nc=navCounts();const body={home:vHome,races:vRaces,players:vPlayers,payouts:vPayouts,site:vSite,history:vHistory}[A.tab]();
+ const nc=navCounts();const body={home:vHome,races:vRaces,players:vPlayers,payouts:vPayouts,site:vSite,history:vHistory,give:()=>vGive()}[A.tab]();
  const ava=$('.o-ava')?$('.o-ava').src:'';
  a.innerHTML=`<div class="bgl"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div><div class="awrap">
  <header class="tb"><div class="awho"><img src="${ava}" alt=""><div><b>UseCodeAlex admin</b><small>Signed in with Kick · @${esc(A.user)} (${role()})</small></div></div>
@@ -2433,7 +2444,7 @@ async function svPull(){let r;try{r=await svFetch('/api/doc/site/pub')}catch(e){
  if(!A.preview)applyQuiet(clone(c));
  if(A.open&&A.user)render()}
 let svLiveKey='';
-async function svLive(){try{const j=await svFetch('/api/live');const k=JSON.stringify([j.boards,j.totals,j.kick]);if(k===svLiveKey)return;svLiveKey=k;
+async function svLive(){try{const j=await svFetch('/api/live');if(j.give){SVG=j.give;renderCi()}const k=JSON.stringify([j.boards,j.totals,j.kick]);if(k===svLiveKey)return;svLiveKey=k;
  SVL.boards=j.boards||{};SVL.totals=j.totals||{};SVL.kick=j.kick||{};applyQuiet(CFG)}catch(e){}}
 async function svHist(){if(!A.user)return;try{const r=await svFetch('/api/doc/site/hist');const h=JSON.parse(r.data.list);if(Array.isArray(h)){A.hist=h;if(A.open&&A.tab==='history')render()}}catch(e){}}
 function svLinks(){['vega','rugs'].forEach(r=>{const s=LK[r];if(!ME.kick){s.st=0;return}s.kick=ME.kick;const l=(ME.links||[]).find(x=>x.race===r&&x.st!=='no');
@@ -2483,7 +2494,9 @@ const _lk0=renderLk;renderLk=function(){if(!SV)return _lk0();const r=race,s=LK[r
   :`<div class="lk-card"><span class="ra">✓</span><div><b class="mono">${esc(sh(s.name))}</b><small>Linked to @${esc(ME.kick)}</small></div></div><span class="lk-ok">✓ Wallet verified</span><p class="lk-p">Your race prizes are sent in SOL to this wallet.</p><button type="button" class="btn pri lk-b" id="lkGo">Done</button>`;
  $('#lkGo').onclick=closeLk;const re=$('#lkRe');if(re)re.onclick=()=>{s.st=1;renderLk()}};
 // linked players see their real rank (Vega names are masked the same way the server masks them)
-const _rm1=renderMe;renderMe=function(r){_rm1(r);if(!SV)return;const s=LK[r],el=$('#meCard');if(!el||!s||s.st<2||(r==='vega'&&!s.ok))return;
+function svBtns(r){const s=LK[r];$$('.lkOpen').forEach(b=>{if(b.closest('#kCi,#meCard,#lk'))return;if(!b.dataset.def)b.dataset.def=b.innerHTML;
+ b.innerHTML=!ME.kick?b.dataset.def:s.st>=2?`<span class="kk">K</span>@${esc(ME.kick)} · ${r==='vega'&&!s.ok?'pending':'linked'}`:`<span class="kk">K</span>Link your ${r==='vega'?'Vega':'Rugs.fun'}`})}
+const _rm1=renderMe;renderMe=function(r){_rm1(r);if(!SV)return;svBtns(r);const s=LK[r],el=$('#meCard');if(!el||!s||s.st<2||(r==='vega'&&!s.ok))return;
  if(r==='vega'){const all=D[r].top.concat(D[r].rows),i=all.findIndex(p=>p[0]===maskName(s.name));if(i<0)return;
   el.innerHTML=`<div style="display:flex;align-items:center;gap:10px"><div class="av">${esc(ME.kick[0].toUpperCase())}</div><div style="flex:1;min-width:0"><b style="font-size:14px">@${esc(ME.kick)}</b><div style="font-size:12px;color:var(--mute)">#${i+1} in the Vega race</div></div><b class="mono" style="font-size:13px">${fmt(all[i][1],r)}</b></div><div style="font-size:12px;color:var(--mute)">${i?fmt(all[i-1][1]-all[i][1],r)+' to pass #'+i:'You are leading the race'}</div>`}};
 if(SV){(async()=>{
@@ -2494,6 +2507,51 @@ if(SV){(async()=>{
  if(lk||si){q.delete('lk');q.delete('signin');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')+location.hash)}
  if(si==='failed')toast('Kick sign-in did not finish. Try again.');if(si==='off')toast('Kick sign-in is not set up yet.');
  if(lk==='vega'||lk==='rugs'){if(lk!==race)apply(lk);openLk()}})()}
+
+/* ===== daily SOL giveaway (server mode) ===== */
+let SVG={today:0,last:null},GV=null,GVkey='',DRAW=null;
+const _ci0=renderCi;renderCi=function(){if(!SV)return _ci0();const el=$('#kCi');if(!el)return;const c=ME.checkin,r=race;
+ const head='<div class="lbl">Daily SOL giveaway</div>',draw=`<span>Draw in <span class="mono kUtc">${untilUTC()}</span></span>`;
+ const foot=`<div class="kfoot"><span>${SVG.last?'Last winner: <b>@'+esc(SVG.last.kick)+'</b>':SVG.today?SVG.today+' checked in today':'Be the first in today'}</span>${draw}</div>`;
+ const bind=()=>$$('#kCi .lkOpen').forEach(b=>b.onclick=openLk);
+ if(!ME.kick){el.innerHTML=head+'<h4>Check in on stream</h4><p>Link your Kick first and you get your own check-in code for Alex\'s chat.</p><button type="button" class="btn kick lkOpen"><span class="kk">K</span>Link your Kick</button>'+foot;bind();return}
+ if(!c||!c.eligible){el.innerHTML=head+`<h4>One step left</h4><p>Link your ${r==='vega'?'Vega account':'Rugs.fun wallet'} and get it approved to enter the daily SOL draw.</p><button type="button" class="btn pri lkOpen">Link ${r==='vega'?'Vega':'Rugs.fun'}</button>`+foot;bind();return}
+ if(c.done){el.innerHTML=head+`<h4>You're checked in today</h4><p>@${esc(ME.kick)} is in today's draw. Alex draws the winner on stream.</p><div class="kfoot"><span class="ok">✓ Entered</span>${draw}</div>`;return}
+ el.innerHTML=head+`<h4>Check in on stream</h4><p>${KICK.live?'Type this in Alex\'s Kick chat now. It counts as today\'s entry.':'Alex is not live right now. Type this in his Kick chat when he\'s live today.'}</p><div class="kcode"><b>${esc(c.word)} ${esc(c.code)}</b><button type="button" id="kCopy">Copy</button></div><div class="kfoot"><span>For @${esc(ME.kick)} only · new code every day</span>${draw}</div>`;
+ $('#kCopy').onclick=async()=>{try{await navigator.clipboard.writeText(c.word+' '+c.code)}catch(e){}toast('Copied '+c.word+' '+c.code)}};
+// admin: Giveaway tab
+if(SV){TABS.splice(TABS.findIndex(t=>t[0]==='history'),0,['give','Giveaway']);
+ IC.give='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8C9 8 7 6 8 4s4 1 4 4c0-3 3-6 4-4s-1 4-4 4"/></svg>'}
+async function gvLoad(force){try{const j=await svFetch('/api/giveaway');const k=JSON.stringify(j);if(!force&&k===GVkey)return;GVkey=k;GV=j;
+ const a=$('#adm');if(A.open&&A.user&&A.tab==='give'&&!(a&&a.contains(document.activeElement)&&document.activeElement.tagName==='INPUT'))render()}catch(e){}}
+function gDay(d){const t=new Date(d+'T12:00:00Z');return t.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',timeZone:'UTC'})}
+function vGive(){if(!GV){gvLoad(1);return '<div class="hd"><h1>Giveaway</h1></div><div class="hint">Loading…</div>'}
+ const g=CFG.site.giveaway||{},td=GV.days.find(d=>d.day===GV.today)||{day:GV.today,entries:[],winner:null,paid:false,tx:''},past=GV.days.filter(d=>d.day!==GV.today);
+ const payRow=d=>d.winner?`<div class="arow" style="gap:8px;flex-wrap:wrap;margin-top:10px"><input type="text" id="gTx-${d.day}" value="${esc(d.tx||'')}" placeholder="Transaction link or note" style="flex:1;min-width:180px" aria-label="Payment note for ${d.day}"><button type="button" class="${d.paid?'gbtn':'pbtn'}" data-act="gPaid" data-day="${d.day}" data-v="${d.paid?0:1}">${d.paid?'Unmark paid':'Mark paid'}</button></div>`:'';
+ const stage=DRAW&&DRAW.day===td.day?`<div class="gstage" id="gStage"><small>Drawing from ${td.entries.length} ${td.entries.length===1?'entry':'entries'}</small><b id="gName">@${esc(DRAW.show)}</b></div>`
+  :td.winner?`<div class="gstage won"><small>Today's winner${td.winner.by==='auto'?' (auto draw)':''}</small><b>@${esc(td.winner.kick)}</b><span class="apill ${td.paid?'paid':'hid'}">${td.paid?'Paid':'Not paid yet'}</span></div>`
+  :`<div class="gstage"><small>${td.entries.length?'Ready when you are':'Waiting for check-ins'}</small><b>${td.entries.length} ${td.entries.length===1?'entry':'entries'}</b></div>`;
+ return `<div class="hd"><h1>Giveaway</h1><button type="button" class="gbtn" data-act="gRefresh">Refresh</button></div>
+ ${g.on===false?'<div class="hint" style="margin-bottom:12px">The giveaway is switched off in Site. Check-ins are not being counted.</div>':''}
+ <div class="glz card"><div class="k" style="font-size:12px;color:var(--mut)">Today · ${gDay(td.day)} (UTC)</div>${stage}
+ <div class="arow" style="gap:8px;flex-wrap:wrap;justify-content:center">${td.winner?(td.paid?'':`<button type="button" class="gbtn" data-act="gDraw" data-day="${td.day}" data-re="1">Redraw</button>`):`<button type="button" class="pbtn gbig" data-act="gDraw" data-day="${td.day}" ${td.entries.length&&!DRAW?'':'disabled'}>Draw winner</button>`}</div>${payRow(td)}
+ <div class="hint" style="margin-top:12px">Players type <b>${esc(g.word||'!link')} + their own code</b> in your Kick chat while you're live. Only approved Vega or Rugs.fun accounts count. If you don't draw by 00:00 UTC, the site draws automatically.</div></div>
+ <h2>Checked in today</h2><div class="list">${td.entries.length?td.entries.slice().reverse().map(e=>`<div class="glz li"><div class="agr"><b>@${esc(e.kick)}</b><small>${ago(e.at)}</small></div></div>`).join(''):'<div class="hint">Nobody yet.</div>'}</div>
+ <h2>Past days</h2><div class="list">${past.length?past.map(d=>`<div class="glz li" style="display:block"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><div class="agr"><b>${gDay(d.day)}</b><small>${d.entries.length} ${d.entries.length===1?'entry':'entries'}${d.winner?' · winner @'+esc(d.winner.kick)+(d.winner.by==='auto'?' (auto)':''):''}</small></div>${d.winner?`<span class="apill ${d.paid?'paid':'hid'}">${d.paid?'Paid':'Not paid'}</span>`:(d.entries.length?`<button type="button" class="pbtn" data-act="gDraw" data-day="${d.day}">Draw</button>`:'')}</div>${payRow(d)}</div>`).join(''):'<div class="hint">No past giveaways yet.</div>'}</div>
+ <h2>Recent check-in attempts</h2><div class="hint" style="margin-bottom:8px">Helps when someone says their check-in didn't count.</div><div class="list">${GV.attempts.length?GV.attempts.slice(0,15).map(a=>`<div class="glz li"><div class="agr"><b>@${esc(a.kick)}</b><small>${esc(a.result)} · ${ago(a.at)}</small></div></div>`).join(''):'<div class="hint">None yet.</div>'}</div>`}
+async function gDraw(day,re){if(DRAW)return;const d=GV.days.find(x=>x.day===day);const names=(d?d.entries:[]).map(e=>e.kick);
+ try{const j=await svFetch('/api/giveaway/draw',{method:'POST',body:{day,reroll:!!re}});
+  if(day!==GV.today||reduce||names.length<2){GV=j;GVkey='';render();toastA('Winner: @'+j.winner.kick);return}
+  DRAW={day,show:names[0]};render();let i=0,t0=performance.now();
+  const step=()=>{const el=$('#gName');const k=(performance.now()-t0)/2400;if(k>=1||!el){DRAW=null;GV=j;GVkey='';render();const st=$('#adm .gstage');if(st)st.classList.add('pop');toastA('Winner: @'+j.winner.kick);return}
+   i=(i+1)%names.length;el.textContent='@'+names[i];setTimeout(step,50+260*k*k)};step()}
+ catch(e){DRAW=null;toastA(e.message);render()}}
+async function gPaid(day,v){const tx=($('#gTx-'+day)||{}).value||'';try{GV=await svFetch('/api/giveaway/paid',{method:'POST',body:{day,paid:!!+v,tx}});GVkey='';render();toastA(+v?'Marked paid':'Marked not paid')}catch(e){toastA(e.message)}}
+document.addEventListener('click',e=>{const t=e.target.closest('#adm [data-act^="g"]');if(!t||!SV)return;const a=t.dataset.act;
+ if(a==='gDraw'){e.stopPropagation();gDraw(t.dataset.day,t.dataset.re)}else if(a==='gPaid'){e.stopPropagation();gPaid(t.dataset.day,t.dataset.v)}else if(a==='gRefresh'){e.stopPropagation();gvLoad(1)}},true);
+if(SV){setInterval(()=>{if(A.open&&A.user&&A.tab==='give'&&!DRAW)gvLoad()},8000);
+ setInterval(()=>{if(ME.kick&&ME.checkin&&!ME.checkin.done&&KICK.live&&document.visibilityState==='visible')svMe()},15000);
+ setInterval(()=>{if(ME.kick&&document.visibilityState==='visible')svMe()},300000)}
 route(location.hash,false);
 admInit();
 })();
